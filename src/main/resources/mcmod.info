@@ -1,14 +1,14 @@
 [
 {
-  "modid": "nm",
-  "name": "Npc Mod",
-  "description": "test mod",
-  "version": "1.0",
+  "modid": "mm",
+  "name": "MGAG Mod",
+  "description": "Test Mod for MGAG.",
+  "version": "0.1",
   "mcversion": "1.12.2",
   "url": "",
   "updateUrl": "",
-  "authorList": ["NSK"],
-  "credits": "Me",
+  "authorList": ["ExampleDude"],
+  "credits": "The Forge and FML guys, for making this example",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

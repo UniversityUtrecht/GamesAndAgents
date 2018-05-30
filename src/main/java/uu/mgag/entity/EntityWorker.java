@@ -42,6 +42,8 @@ import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootTableList;
 import uu.mgag.entity.ai.EntityAIAccessChest;
+import uu.mgag.entity.ai.EntityAIMineResource;
+import uu.mgag.entity.ai.EntityAIMoveToResource;
 import uu.mgag.entity.ai.EntityAIMoveToSupplyPoint;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
@@ -54,6 +56,8 @@ public class EntityWorker extends EntityCreature implements INpc
 	
 	private EntityAIMoveToSupplyPoint moveToSupplyPoint;
 	private EntityAIAccessChest accessChest;
+	private EntityAIMineResource mineResource;
+	private EntityAIMoveToResource moveToResource;
 	
 	public EntityWorker(World worldIn)
     {
@@ -66,10 +70,13 @@ public class EntityWorker extends EntityCreature implements INpc
         this.workerInventory = new InventoryBasic("Items", false, 8);
         this.setSize(0.6F, 1.95F);
         ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        this.setCanPickUpLoot(true);
+        //this.setCanPickUpLoot(true);
+        this.setCanPickUpLoot(false);
         
         moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.FOOD_INGREDIENTS);
+        moveToResource = new EntityAIMoveToResource(this, 0.6D, Blocks.LOG);
         accessChest = new EntityAIAccessChest(this, 0.6D, Blocks.LOG, 10, false);
+        mineResource = new EntityAIMineResource(this, 0.6D, Blocks.LOG);
     }
 	
 	protected void initEntityAI()
@@ -96,7 +103,9 @@ public class EntityWorker extends EntityCreature implements INpc
 		//this.tasks.addTask(2, new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.FOOD_INGREDIENTS));        
 		//this.tasks.addTask(3, new EntityAIAccessChest(this, 0.6D, Blocks.LOG, 10, false));
 		
-		this.tasks.addTask(2, moveToSupplyPoint);
+		//this.tasks.addTask(2, moveToSupplyPoint);
+        this.tasks.addTask(2, moveToResource);
+        this.tasks.addTask(2, mineResource);
 		
 		super.updateAITasks();
     }

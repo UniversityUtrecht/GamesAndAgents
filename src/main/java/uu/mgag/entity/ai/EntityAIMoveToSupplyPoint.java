@@ -19,13 +19,15 @@ import uu.mgag.util.enums.EnumSupplyOffset;
 public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
 {
 	private final EntityWorker worker;
-	private BlockPos supplyPoint;
 	private EnumSupplyOffset supplyChest;
+	public boolean complete;
 
-	public EntityAIMoveToSupplyPoint(EntityWorker workerIn, double speedIn, EnumSupplyOffset side) {
-		super(workerIn, speedIn, 16);
+	public EntityAIMoveToSupplyPoint(EntityWorker workerIn, double speedIn, EnumSupplyOffset side)
+	{
+		super(workerIn, speedIn, 64);
 		this.worker = workerIn;
 		this.supplyChest = side;
+		this.complete = false;
 	}
 	
 	/**
@@ -39,20 +41,35 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
             {
                 return false;
             }
-
-            //this.supplyPoint = this.worker.getTown().getSupplyPoint().add(supplyChest.getOffset());
         }
 
         return super.shouldExecute();
     }
-
+    
+    /**
+     * Returns whether an in-progress EntityAIBase should continue executing
+     */
+    public boolean shouldContinueExecuting()
+    {
+        return !complete;
+    }
+    
+    /**
+     * Keep ticking a continuous task that has already been started
+     */
+	public void updateTask()
+    {
+		if (this.worker.getDistanceSqToCenter(this.destinationBlock) <= 1.0D) complete = true;
+		super.updateTask();
+    }
+    
+    /**
+     * Return true to set given position as destination
+     */
 	@Override
 	protected boolean shouldMoveTo(World worldIn, BlockPos pos) {
-		BlockPos foundationPos = pos.subtract(supplyChest.getOffset());
-		
-		Block block = worldIn.getBlockState(foundationPos).getBlock();	
-		
-		//worldIn.getBlockState(foundationPos).getProperties().get("variant");
+		BlockPos foundationPos = pos.subtract(supplyChest.getOffset());		
+		Block block = worldIn.getBlockState(foundationPos).getBlock();			
 		int type = block.getMetaFromState(worldIn.getBlockState(foundationPos));
 		
 		if (block == Block.REGISTRY.getObject(new ResourceLocation("mm:foundation_block")) && type == EnumBuildingType.SUPPLY_POINT.getMeta())

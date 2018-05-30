@@ -10,9 +10,12 @@ import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
+import net.minecraft.entity.ai.EntityAIHarvestFarmland;
+import net.minecraft.entity.ai.EntityAIPlay;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
@@ -26,16 +29,20 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.MerchantRecipeList;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootTableList;
+import uu.mgag.entity.ai.EntityAIAccessChest;
 import uu.mgag.entity.ai.EntityAIMoveToSupplyPoint;
-import uu.mgag.entity.ai.EntityAITakeFromChest;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
 public class EntityWorker extends EntityCreature implements INpc
@@ -44,8 +51,9 @@ public class EntityWorker extends EntityCreature implements INpc
 	protected int randomTickDivider;
 	
 	protected final InventoryBasic workerInventory;
-
-    private boolean areAdditionalTasksSet;
+	
+	private EntityAIMoveToSupplyPoint moveToSupplyPoint;
+	private EntityAIAccessChest accessChest;
 	
 	public EntityWorker(World worldIn)
     {
@@ -59,6 +67,9 @@ public class EntityWorker extends EntityCreature implements INpc
         this.setSize(0.6F, 1.95F);
         ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
         this.setCanPickUpLoot(true);
+        
+        moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.FOOD_INGREDIENTS);
+        accessChest = new EntityAIAccessChest(this, 0.6D, Blocks.LOG, 10, false);
     }
 	
 	protected void initEntityAI()
@@ -67,11 +78,7 @@ public class EntityWorker extends EntityCreature implements INpc
         this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityZombie.class, 8.0F, 0.6D, 0.6D));
         this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityEvoker.class, 12.0F, 0.8D, 0.8D));
         this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityVindicator.class, 8.0F, 0.8D, 0.8D));
-        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityVex.class, 8.0F, 0.6D, 0.6D));
-        
-        //this.tasks.addTask(2, new EntityAITakeFromChest(this, 0.6D, Blocks.LOG, 10));
-        
-        this.tasks.addTask(2, new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.FOOD_INGREDIENTS));
+        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityVex.class, 8.0F, 0.6D, 0.6D));        
         this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
         this.tasks.addTask(9, new EntityAIWanderAvoidWater(this, 0.6D));
         this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F));
@@ -82,6 +89,16 @@ public class EntityWorker extends EntityCreature implements INpc
         super.applyEntityAttributes();
         this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
+    }
+	
+	protected void updateAITasks()
+    {        
+		//this.tasks.addTask(2, new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.FOOD_INGREDIENTS));        
+		//this.tasks.addTask(3, new EntityAIAccessChest(this, 0.6D, Blocks.LOG, 10, false));
+		
+		this.tasks.addTask(2, moveToSupplyPoint);
+		
+		super.updateAITasks();
     }
 	
 	/**
@@ -131,7 +148,7 @@ public class EntityWorker extends EntityCreature implements INpc
     /**
      * Print a debug text of this workers inventory to standard output.
      */
-    protected void printWorkersInventory()
+    public void printWorkersInventory()
     {
         for(int i=0; i<workerInventory.getSizeInventory(); i++)
         {

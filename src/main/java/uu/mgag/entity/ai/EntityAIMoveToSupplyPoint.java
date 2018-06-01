@@ -2,6 +2,7 @@ package uu.mgag.entity.ai;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIMoveToBlock;
@@ -20,54 +21,61 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
 {
 	private final EntityWorker worker;
 	private EnumSupplyOffset supplyChest;
-	public boolean complete;
+	public boolean active;
 
 	public EntityAIMoveToSupplyPoint(EntityWorker workerIn, double speedIn, EnumSupplyOffset side)
 	{
 		super(workerIn, speedIn, 64);
 		this.worker = workerIn;
 		this.supplyChest = side;
-		this.complete = false;
+		this.active = false;
+		this.setMutexBits(7);
 	}
-	
-	/**
-     * Returns whether the EntityAIBase should begin execution.
-     */
-    public boolean shouldExecute()
-    {
-        if (this.runDelay <= 0)
-        {
-            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.worker.world, this.worker))
-            {
-                return false;
-            }
-        }
-
-        return super.shouldExecute();
-    }
-    
-    /**
-     * Returns whether an in-progress EntityAIBase should continue executing
-     */
-    public boolean shouldContinueExecuting()
-    {
-        return !complete;
-    }
     
     /**
      * Keep ticking a continuous task that has already been started
      */
 	public void updateTask()
     {
-		if (this.worker.getDistanceSqToCenter(this.destinationBlock) <= 1.0D) complete = true;
-		super.updateTask();
+		if (this.worker.getDistanceSqToCenter(this.destinationBlock) <= 3.0D) 
+		{
+			active = false;
+			this.worker.stage++;
+			this.runDelay = 0;
+			return;
+		}
+		if (active) super.updateTask();
+    }    	
+    
+	/**
+     * Returns whether the EntityAIBase should begin execution.
+     */
+	public boolean shouldExecute()
+    {
+		return active && super.shouldExecute();
+    }
+	
+    /**
+     * Returns whether an in-progress EntityAIBase should continue executing
+     */
+    public boolean shouldContinueExecuting()
+    {
+        return active && super.shouldContinueExecuting();
     }
     
+	public void startExecuting()
+    {		
+		//Minecraft.getMinecraft().player.sendChatMessage(this.destinationBlock.getX() + ", " + this.destinationBlock.getY() + ", " + this.destinationBlock.getZ());
+		Minecraft.getMinecraft().player.sendChatMessage("Moving to Supply Point");
+		super.startExecuting();
+    }
+	
     /**
      * Return true to set given position as destination
      */
 	@Override
-	protected boolean shouldMoveTo(World worldIn, BlockPos pos) {
+	protected boolean shouldMoveTo(World worldIn, BlockPos pos)
+	{
 		BlockPos foundationPos = pos.subtract(supplyChest.getOffset());		
 		Block block = worldIn.getBlockState(foundationPos).getBlock();			
 		int type = block.getMetaFromState(worldIn.getBlockState(foundationPos));
@@ -78,6 +86,11 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
 		}		
 		
 		return false;
+	}
+	
+	public void setSupplyChest(EnumSupplyOffset side)
+	{
+		this.supplyChest = side;
 	}
 
 }

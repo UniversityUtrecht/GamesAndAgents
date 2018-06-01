@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IEntityLivingData;
@@ -53,59 +54,46 @@ public class EntityWorker extends EntityCreature implements INpc
 	protected int randomTickDivider;
 	
 	protected final InventoryBasic workerInventory;
-	
-	private EntityAIMoveToSupplyPoint moveToSupplyPoint;
-	private EntityAIAccessChest accessChest;
-	private EntityAIMineResource mineResource;
-	private EntityAIMoveToResource moveToResource;
-	
-	public EntityWorker(World worldIn)
-    {
-        this(worldIn, 0);
-    }
 
-    public EntityWorker(World worldIn, int professionId)
+    protected boolean areAdditionalTasksSet;    
+    
+    // Stages will be unique to each role
+   	public int stage;
+
+    public EntityWorker(World worldIn)
     {
         super(worldIn);
         this.workerInventory = new InventoryBasic("Items", false, 8);
         this.setSize(0.6F, 1.95F);
         ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
-        //this.setCanPickUpLoot(true);
         this.setCanPickUpLoot(false);
-        
-        moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.FOOD_INGREDIENTS);
-        moveToResource = new EntityAIMoveToResource(this, 0.6D, Blocks.LOG);
-        accessChest = new EntityAIAccessChest(this, 0.6D, Blocks.LOG, 10, false);
-        mineResource = new EntityAIMineResource(this, 0.6D, Blocks.LOG);
     }
 	
 	protected void initEntityAI()
     {
+		tasks.taskEntries.clear();
         this.tasks.addTask(0, new EntityAISwimming(this));
         this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityZombie.class, 8.0F, 0.6D, 0.6D));
         this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityEvoker.class, 12.0F, 0.8D, 0.8D));
         this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityVindicator.class, 8.0F, 0.8D, 0.8D));
-        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityVex.class, 8.0F, 0.6D, 0.6D));        
+        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityVex.class, 8.0F, 0.6D, 0.6D));                
         this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
         this.tasks.addTask(9, new EntityAIWanderAvoidWater(this, 0.6D));
-        this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F));
+        this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F)); 
     }
+	
+	private void setAdditionalAItasks() {}
 	
 	protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
         this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(128.0D);
     }
 	
 	protected void updateAITasks()
-    {        
-		//this.tasks.addTask(2, new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.FOOD_INGREDIENTS));        
-		//this.tasks.addTask(3, new EntityAIAccessChest(this, 0.6D, Blocks.LOG, 10, false));
-		
-		//this.tasks.addTask(2, moveToSupplyPoint);
-        this.tasks.addTask(2, moveToResource);
-        this.tasks.addTask(2, mineResource);
+    {
 		
 		super.updateAITasks();
     }
@@ -147,6 +135,15 @@ public class EntityWorker extends EntityCreature implements INpc
     public BlockPos getPos()
     {
         return new BlockPos(this);
+    }
+    
+    /**
+     * (abstract) Protected helper method to read subclass entity data from NBT.
+     */
+    public void readEntityFromNBT(NBTTagCompound compound)
+    {
+        super.readEntityFromNBT(compound);
+        this.setAdditionalAItasks();
     }
     
     public InventoryBasic getWorkerInventory()

@@ -15,16 +15,38 @@ public class EntityAIMineResource extends EntityAIBase {
     private final EntityWorker worker;
     private final Block resourceType;
     private InventoryBasic inventory;
+    public boolean active;
 
     public EntityAIMineResource(EntityWorker workerIn, double speedIn, Block resourceTypeIn) {
         worker = workerIn;
         resourceType = resourceTypeIn;
         inventory = worker.getWorkerInventory();
+		this.active = false;
+		this.setMutexBits(7);
     }
 
-    @Override
-    public boolean shouldExecute() {
-        return resourceInRange() && !hasBlock();
+    /**
+     * Returns whether the EntityAIBase should begin execution.
+     */
+	public boolean shouldExecute()
+    {
+		return active;
+    }
+	
+    /**
+     * Returns whether an in-progress EntityAIBase should continue executing
+     */
+    public boolean shouldContinueExecuting()
+    {
+        return active;
+    }
+    
+    /**
+     * Execute a one shot task or start executing a continuous task
+     */
+    public void startExecuting()
+    {
+    	this.getResourceInRange();
     }
 
     private boolean hasBlock()
@@ -33,7 +55,8 @@ public class EntityAIMineResource extends EntityAIBase {
         // For now, done when worker has at least one log in inventory
         for(int i=0; i<inventory.getSizeInventory(); i++)
         {
-            if (Block.getBlockFromItem(inventory.getStackInSlot(i).getItem()) instanceof BlockLog) {
+            if (Block.getBlockFromItem(inventory.getStackInSlot(i).getItem()) instanceof BlockLog)
+            {
                 Minecraft.getMinecraft().player.sendChatMessage("NPC has " + resourceType.toString());
                 return true;
             }
@@ -41,7 +64,7 @@ public class EntityAIMineResource extends EntityAIBase {
         return false;
     }
 
-    private boolean resourceInRange() {
+    private boolean getResourceInRange() {
         BlockPos pos = worker.getPos();
         inventory = worker.getWorkerInventory();
 
@@ -56,11 +79,18 @@ public class EntityAIMineResource extends EntityAIBase {
                         worker.world.destroyBlock(blockPos, false);
                         worker.getWorkerInventory().addItem(new ItemStack(resourceType));
                         Minecraft.getMinecraft().player.sendChatMessage("NPC acquired " + resourceType.toString());
+                        this.active = false;
+                        this.worker.stage++;
                         return true;
                     }
                 }
             }
         }
         return false;
+    }
+    
+    public void updateTask()
+    {
+    	
     }
 }

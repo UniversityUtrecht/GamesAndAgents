@@ -9,4 +9,9 @@ public class Reference {
 	public static final String COMMON_PROXY_CLASS = "uu.mgag.proxy.CommonProxy";
 	
 	public static final int ENTITY_WORKER = 120;
+	public static final int ENTITY_BUILDER = 121;
+	public static final int ENTITY_FARMER = 122;
+	public static final int ENTITY_LUMBERJACK = 123;
+	public static final int ENTITY_BLACKSMITH = 124;
+	public static final int ENTITY_MINER = 125;
 }

@@ -3,6 +3,7 @@ package uu.mgag.entity.ai;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIMoveToBlock;
 import net.minecraft.init.Blocks;
@@ -16,7 +17,7 @@ public class EntityAIAccessChest extends EntityAIMoveToBlock
 	private Block itemToAccess;
 	private int quantity;
 	private boolean deposit;
-	public boolean complete;
+	public boolean active;
 
     private int timeoutCounter;
     private int maxStayTicks;
@@ -28,29 +29,23 @@ public class EntityAIAccessChest extends EntityAIMoveToBlock
 		this.itemToAccess = itemIn;
 		this.quantity = quantityIn;
 		this.deposit = depositIn;
-		this.complete = false;
+		this.active = false;
 	}
 	
-	@Override
-	public boolean shouldExecute()
-	{
-        if (this.runDelay <= 0)
-        {
-            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.worker.world, this.worker))
-            {
-                return false;
-            }
-        }
-
-        return super.shouldExecute();
-	}
-
 	/**
+     * Returns whether the EntityAIBase should begin execution.
+     */
+	public boolean shouldExecute()
+    {
+		return active && super.shouldExecute();
+    }
+	
+    /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     public boolean shouldContinueExecuting()
     {
-        return !complete;
+    	return active && super.shouldContinueExecuting();
     }
 	
     /**
@@ -59,7 +54,8 @@ public class EntityAIAccessChest extends EntityAIMoveToBlock
     @Override
     public void startExecuting()
     {
-        this.timeoutCounter = 0;
+    	Minecraft.getMinecraft().player.sendChatMessage("Accessing Chest");
+    	this.timeoutCounter = 0;
         this.maxStayTicks = this.worker.getRNG().nextInt(this.worker.getRNG().nextInt(1200) + 1200) + 1200;
     }
 
@@ -86,15 +82,21 @@ public class EntityAIAccessChest extends EntityAIMoveToBlock
         //super.updateTask();
         this.worker.getLookHelper().setLookPosition((double)this.destinationBlock.getX() + 0.5D, (double)(this.destinationBlock.getY() + 1), (double)this.destinationBlock.getZ() + 0.5D, 10.0F, (float)this.worker.getVerticalFaceSpeed());
 
-        if (this.worker.getDistanceSqToCenter(this.destinationBlock) <= 1.5D)
+        if (this.worker.getDistanceSqToCenter(this.destinationBlock) <= 3.0D)
         {
         	if (this.deposit)
+        	{
         		this.worker.depositItemsToChest(this.destinationBlock.up(), itemToAccess, 1);
+        	}
         	else	
+        	{
             	this.worker.takeItemsFromChest(this.destinationBlock.up(), itemToAccess, quantity);
+        	}
 
     		this.worker.printWorkersInventory();
-        	this.complete = true;    
+        	this.active = false;
+        	this.worker.stage++;
+        	this.runDelay = 0;
         }
     }
 

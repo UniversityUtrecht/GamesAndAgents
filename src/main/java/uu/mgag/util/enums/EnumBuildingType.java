@@ -6,7 +6,8 @@ public enum EnumBuildingType implements IStringSerializable
 {
 	SUPPLY_POINT (0, "supply"),
 	TOWN_HALL (1, "hall"),
-	FARM (2, "farm");
+	FARM (2, "farm"),
+	BLACKSMITH (3, "smith");
 	
 	private static final EnumBuildingType[] META_LOOKUP = new EnumBuildingType[values().length];
 	private final int meta;

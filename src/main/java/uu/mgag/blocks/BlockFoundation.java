@@ -39,6 +39,7 @@ public class BlockFoundation extends Block implements IHasModel, IMetaName
 		setUnlocalizedName(name);
 		setRegistryName(name);		
 		setBlockUnbreakable();
+		setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 		setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, EnumBuildingType.SUPPLY_POINT));
 		
 		this.type = typeIn;

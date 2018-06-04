@@ -7,6 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIMoveToBlock;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import uu.mgag.entity.EntityWorker;
@@ -14,7 +16,7 @@ import uu.mgag.entity.EntityWorker;
 public class EntityAIAccessChest extends EntityAIMoveToBlock
 {
 	private final EntityWorker worker;
-	private Block itemToAccess;
+	private int itemIdToAccess = 0;
 	private int quantity;
 	private boolean deposit;
 	public boolean active;
@@ -22,11 +24,11 @@ public class EntityAIAccessChest extends EntityAIMoveToBlock
     private int timeoutCounter;
     private int maxStayTicks;
 	
-	public EntityAIAccessChest(EntityWorker workerIn, double speedIn, Block itemIn, int quantityIn, boolean depositIn)
+    public EntityAIAccessChest(EntityWorker workerIn, double speedIn, int itemIdIn, int quantityIn, boolean depositIn)
 	{
 		super(workerIn, speedIn, 64);
 		this.worker = workerIn;
-		this.itemToAccess = itemIn;
+		this.itemIdToAccess = itemIdIn;
 		this.quantity = quantityIn;
 		this.deposit = depositIn;
 		this.active = false;
@@ -86,14 +88,12 @@ public class EntityAIAccessChest extends EntityAIMoveToBlock
         {
         	if (this.deposit)
         	{
-        		this.worker.depositItemsToChest(this.destinationBlock.up(), itemToAccess, 1);
+        		this.worker.depositItemsToChest(this.destinationBlock.up(), itemIdToAccess, quantity);
         	}
         	else	
         	{
-            	this.worker.takeItemsFromChest(this.destinationBlock.up(), itemToAccess, quantity);
+        		this.worker.takeItemsFromChest(this.destinationBlock.up(), itemIdToAccess, quantity);
         	}
-
-    		this.worker.printWorkersInventory();
         	this.active = false;
         	this.worker.stage++;
         	this.runDelay = 0;

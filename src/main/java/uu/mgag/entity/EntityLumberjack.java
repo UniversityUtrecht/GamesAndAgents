@@ -1,5 +1,6 @@
 package uu.mgag.entity;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.INpc;
 import net.minecraft.init.Blocks;
@@ -14,7 +15,7 @@ import uu.mgag.util.enums.EnumSupplyOffset;
 public class EntityLumberjack extends EntityWorker implements INpc
 {	
 	private EntityAIMoveToSupplyPoint moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.BUILDING_MATERIALS);
-	private EntityAIAccessChest accessChest = new EntityAIAccessChest(this, 0.6D, Blocks.LOG, 1, true);
+	private EntityAIAccessChest accessChest = new EntityAIAccessChest(this, 0.6D, Block.getIdFromBlock(Blocks.LOG), 1, true);
 	private EntityAIMineResource mineResource = new EntityAIMineResource(this, 0.6D, Blocks.LOG);
 	private EntityAIMoveToResource moveToResource = new EntityAIMoveToResource(this, 0.6D, Blocks.LOG);
 	

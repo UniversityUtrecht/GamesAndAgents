@@ -27,8 +27,10 @@ import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -170,7 +172,7 @@ public class EntityWorker extends EntityCreature implements INpc
      * @param item to take
      * @param quantity of items to take
      */
-    public void takeItemsFromChest(BlockPos chestPosition, Block item, int quantity)
+    public void takeItemsFromChest(BlockPos chestPosition, int itemId, int quantity)
     {
         IBlockState iblockstate = world.getBlockState(chestPosition);
         Block block = iblockstate.getBlock();
@@ -180,7 +182,7 @@ public class EntityWorker extends EntityCreature implements INpc
         	
         	for(int i=0; i<chestInventory.getSizeInventory(); i++)
         	{
-        		if(Block.getIdFromBlock(Block.getBlockFromItem(chestInventory.getStackInSlot(i).getItem())) == Block.getIdFromBlock(item))
+        		if(Item.getIdFromItem(chestInventory.getStackInSlot(i).getItem()) == itemId)
         		{
         			InventoryBasic workerInventory = getWorkerInventory();
                     ItemStack takenItems = chestInventory.getStackInSlot(i).splitStack(quantity);
@@ -210,8 +212,9 @@ public class EntityWorker extends EntityCreature implements INpc
      * @param item to take
      * @param quantity of items to take
      */
-    public void depositItemsToChest(BlockPos chestPosition, Block item, int quantity)
+    public void depositItemsToChest(BlockPos chestPosition, int itemId, int quantity)
     {
+    	
     	IBlockState iblockstate = world.getBlockState(chestPosition);
         Block block = iblockstate.getBlock();
         if (block instanceof BlockChest)
@@ -220,7 +223,7 @@ public class EntityWorker extends EntityCreature implements INpc
         	
         	for(int i=0; i<workerInventory.getSizeInventory(); i++)
         	{
-        		if(Block.getIdFromBlock(Block.getBlockFromItem(workerInventory.getStackInSlot(i).getItem())) == Block.getIdFromBlock(item))
+        		if(Item.getIdFromItem(workerInventory.getStackInSlot(i).getItem()) == itemId)
         		{
                     ItemStack takenItems = workerInventory.getStackInSlot(i).splitStack(quantity);
                     quantity -= takenItems.getCount();
@@ -232,7 +235,7 @@ public class EntityWorker extends EntityCreature implements INpc
                     	int currentStackSize = currentStack.getCount();
                     	int maxStackSize = currentStack.getMaxStackSize();
                     	
-                    	if(Block.getIdFromBlock(Block.getBlockFromItem(currentStack.getItem())) == Block.getIdFromBlock(item) && 
+                    	if(Item.getIdFromItem(currentStack.getItem()) == itemId &&
                     			maxStackSize != currentStackSize)
                     	{
                     		if(maxStackSize < currentStackSize + takenItems.getCount()) // Not all items will fit in current stack
@@ -257,7 +260,7 @@ public class EntityWorker extends EntityCreature implements INpc
                     {
                     	for(int j=0; j<chestInventory.getSizeInventory(); j++)
                         {
-                        	if(Block.getIdFromBlock(Block.getBlockFromItem(chestInventory.getStackInSlot(j).getItem())) == Block.getIdFromBlock(Blocks.AIR))
+                        	if(Item.getIdFromItem(chestInventory.getStackInSlot(j).getItem()) == Block.getIdFromBlock(Blocks.AIR))
                         	{
                         		chestInventory.setInventorySlotContents(j, takenItems);
                         		break;

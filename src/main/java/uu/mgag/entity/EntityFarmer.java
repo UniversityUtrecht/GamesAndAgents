@@ -8,22 +8,44 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import uu.mgag.entity.ai.EntityAIAccessChest;
 import uu.mgag.entity.ai.EntityAIHarvestCrops;
-import uu.mgag.entity.ai.EntityAIMoveToResource;
+import uu.mgag.entity.ai.EntityAIMoveToReferencePoint;
 import uu.mgag.entity.ai.EntityAIMoveToSupplyPoint;
+import uu.mgag.entity.ai.EntityAIReplantCrops;
+import uu.mgag.util.enums.EnumBuildingType;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
 public class EntityFarmer extends EntityWorker implements INpc
 {
 	
+	/*
+	public static enum EntityStage {
+		NONE(-1), 
+		IDLE(0), 
+		MOVE_TO_SUPPLY_POINT(1), 
+		DEPOSIT_RESOURCES(2), 
+		HARVEST_CROPS(3), 
+		REPLANT_CROPS(4), 
+		MOVE_TO_REFERENCE_POINT(5), 
+		TAKE_SEEDS(6);
+		
+		private final int value;
+
+		EntityStage(final int newValue) {
+            value = newValue;
+        }
+
+        public int getValue() { return value; }
+	}
+	*/
 	private EntityAIMoveToSupplyPoint moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.FOOD_INGREDIENTS);
-	private EntityAIAccessChest accessChest = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Items.WHEAT), 1, true);
+	private EntityAIAccessChest takeSeeds = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Items.WHEAT_SEEDS), 1, false);
+	private EntityAIAccessChest depositResources = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Items.WHEAT), 1, true);
 	private EntityAIHarvestCrops harvestCrops = new EntityAIHarvestCrops(this, 0.6D, Blocks.WHEAT);
-	private EntityAIMoveToResource moveToResource = new EntityAIMoveToResource(this, 0.6D, Blocks.FARMLAND); // Could go to wrong FARMLAND...
+	private EntityAIReplantCrops replantCrops = new EntityAIReplantCrops(this, 0.6D);
+	private EntityAIMoveToReferencePoint moveToReferencePoint = new EntityAIMoveToReferencePoint(this, 0.6D, EnumBuildingType.FARM);
 
 	public EntityFarmer(World worldIn) {
 		super(worldIn);
-
-		this.stage = -1;
 	}
 
 	protected void initEntityAI()
@@ -39,43 +61,64 @@ public class EntityFarmer extends EntityWorker implements INpc
         {
             this.areAdditionalTasksSet = true; 
             
-            this.tasks.addTask(2, moveToResource);
             this.tasks.addTask(2, moveToSupplyPoint);
-            this.tasks.addTask(2, accessChest);
+            this.tasks.addTask(2, depositResources);
             this.tasks.addTask(2, harvestCrops);
+            this.tasks.addTask(2, replantCrops);
+            this.tasks.addTask(2, moveToReferencePoint);
+            this.tasks.addTask(2, takeSeeds);
         }
     }
 	
 	protected void updateAITasks()
 	{
-		if (stage < 0 || stage > 3) stage = 0;
+		switch (stage) {
+		case DEPOSIT_RESOURCES:
+			if (!this.depositResources.active) 
+			{
+				this.depositResources.active = true;
+			}
+			break;
+		case GATHER_RESOURCES:
+			if (!this.harvestCrops.active) 
+			{
+				this.harvestCrops.active = true;
+			}
+			break;
+		case IDLE:
+			moveToNextStage();
+			break;
+		case MOVE_TO_SUPPLY_POINT:
+			if (!this.moveToSupplyPoint.active) 
+			{
+				this.moveToSupplyPoint.active = true;
+			}
+			break;
+		case MOVE_TO_WORKING_REFERENCE_POINT:
+			if (!this.moveToReferencePoint.active) 
+			{
+				this.moveToReferencePoint.active = true;
+			}
+			break;
+		case NONE:
+			moveToNextStage();
+			break;
+		case POST_GATHER_RESOURCES: // Replant crops
+			if (!this.replantCrops.active) 
+			{
+				this.replantCrops.active = true;
+			}
+			break;
+		case TAKE_TOOLS: // Take seets, TODO: take tools
+			if (!this.takeSeeds.active)
+			{
+				this.takeSeeds.active = true;
+			}
+			break;
+		default:
+			moveToNextStage();
+			break;
 		
-		switch (stage)
-		{
-			case 0:
-				if (!this.moveToResource.active)
-				{
-					this.moveToResource.active = true;
-				}
-				break;
-			case 1:
-				if (!this.harvestCrops.active) 
-				{
-					this.harvestCrops.active = true;
-				}
-				break;
-			case 2:
-				if (!this.moveToSupplyPoint.active) 
-				{
-					this.moveToSupplyPoint.active = true;
-				}
-				break;
-			case 3:
-				if (!this.accessChest.active) 
-				{
-					this.accessChest.active = true;
-				}
-				break;
 		}
 		
 		super.updateAITasks();
@@ -89,5 +132,39 @@ public class EntityFarmer extends EntityWorker implements INpc
     {
         super.readEntityFromNBT(compound);
         this.setAdditionalAItasks();
+    }
+    
+    @Override
+    public void moveToNextStage()
+    {
+    	switch (stage) {
+		case DEPOSIT_RESOURCES:
+			stage = EntityStage.TAKE_TOOLS;
+			break;
+		case GATHER_RESOURCES:
+			stage = EntityStage.POST_GATHER_RESOURCES;
+			break;
+		case IDLE:
+			stage = EntityStage.MOVE_TO_SUPPLY_POINT;
+			break;
+		case MOVE_TO_SUPPLY_POINT:
+			stage = EntityStage.DEPOSIT_RESOURCES;
+			break;
+		case MOVE_TO_WORKING_REFERENCE_POINT:
+			stage = EntityStage.GATHER_RESOURCES;
+			break;
+		case NONE:
+			stage = EntityStage.IDLE;
+			break;
+		case POST_GATHER_RESOURCES:
+			stage = EntityStage.MOVE_TO_SUPPLY_POINT;
+			break;
+		case TAKE_TOOLS:
+			stage = EntityStage.MOVE_TO_WORKING_REFERENCE_POINT;
+			break;
+		default:
+			stage = EntityStage.NONE;
+			break;
+		}
     }
 }

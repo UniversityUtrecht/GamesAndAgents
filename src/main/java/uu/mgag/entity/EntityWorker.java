@@ -8,15 +8,11 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
-import net.minecraft.entity.ai.EntityAIHarvestFarmland;
-import net.minecraft.entity.ai.EntityAIPlay;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
@@ -27,28 +23,19 @@ import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.village.MerchantRecipeList;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootTableList;
-import uu.mgag.entity.ai.EntityAIAccessChest;
-import uu.mgag.entity.ai.EntityAIMineResource;
-import uu.mgag.entity.ai.EntityAIMoveToResource;
-import uu.mgag.entity.ai.EntityAIMoveToSupplyPoint;
-import uu.mgag.util.enums.EnumSupplyOffset;
 
 public class EntityWorker extends EntityCreature implements INpc
 {
@@ -60,7 +47,7 @@ public class EntityWorker extends EntityCreature implements INpc
     protected boolean areAdditionalTasksSet;    
     
     // Stages will be unique to each role
-   	public int stage;
+   	public EntityStage stage;
 
     public EntityWorker(World worldIn)
     {
@@ -69,6 +56,7 @@ public class EntityWorker extends EntityCreature implements INpc
         this.setSize(0.6F, 1.95F);
         ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
         this.setCanPickUpLoot(false);
+        this.stage = EntityStage.NONE;
     }
 	
 	protected void initEntityAI()
@@ -274,6 +262,14 @@ public class EntityWorker extends EntityCreature implements INpc
         		}
         	}
         }
+    }
+    
+    /**
+     * Move to the next appropriate stage in the state machine.
+     */
+    public void moveToNextStage()
+    {
+    	stage = EntityStage.NONE;
     }
 
 }

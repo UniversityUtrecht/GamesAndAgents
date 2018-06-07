@@ -95,7 +95,8 @@ public class EntityAIAccessChest extends EntityAIMoveToBlock
         		this.worker.takeItemsFromChest(this.destinationBlock.up(), itemIdToAccess, quantity);
         	}
         	this.active = false;
-        	this.worker.stage++;
+        	//this.worker.stage++;
+        	this.worker.moveToNextStage();
         	this.runDelay = 0;
         }
     }

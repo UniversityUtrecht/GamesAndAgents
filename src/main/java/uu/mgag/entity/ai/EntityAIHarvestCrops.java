@@ -2,15 +2,12 @@ package uu.mgag.entity.ai;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
-import net.minecraft.block.BlockLog;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.ai.EntityAIMoveToBlock;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import uu.mgag.entity.EntityWorker;
@@ -27,7 +24,6 @@ public class EntityAIHarvestCrops extends EntityAIMoveToBlock {
 		this.active = false;
 		this.runDelay = 10;
 		this.setMutexBits(7);
-		
     }
 
 	@Override
@@ -39,38 +35,13 @@ public class EntityAIHarvestCrops extends EntityAIMoveToBlock {
 		return active && super.shouldExecute();
     }
 	
+	@Override
 	/**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     public boolean shouldContinueExecuting()
     {
         return active && super.shouldContinueExecuting();
-    }
-    
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
-    public void startExecuting()
-    {
-    	//this.runDelay = 10;
-    	//this.active = true;
-    	super.startExecuting();
-    	//this.getResourceInRange();
-    }
-
-    private boolean hasBlock()
-    {
-        InventoryBasic inventory = worker.getWorkerInventory();
-        // For now, done when worker has at least one log in inventory
-        for(int i=0; i<inventory.getSizeInventory(); i++)
-        {
-            if (Block.getBlockFromItem(inventory.getStackInSlot(i).getItem()) instanceof BlockLog)
-            {
-                Minecraft.getMinecraft().player.sendChatMessage("NPC has " + resourceType.toString());
-                return true;
-            }
-        }
-        return false;
     }
 
     public void updateTask()
@@ -87,13 +58,12 @@ public class EntityAIHarvestCrops extends EntityAIMoveToBlock {
             		block instanceof BlockCrops && 
             		((BlockCrops)block).isMaxAge(iblockstate)) 
             {
-                this.worker.getWorkerInventory().addItem(new ItemStack(Blocks.LOG, 1)); // TODO: stack size based on drops
+                this.worker.getWorkerInventory().addItem(new ItemStack(Items.WHEAT, 1)); // TODO: stack size based on drops
                 worker.world.setBlockState(blockPos, ((BlockCrops)resourceType).getDefaultState(), 3); // Change this
                 Minecraft.getMinecraft().player.sendChatMessage("NPC acquired " + resourceType.toString());
                 this.active = false;
-                this.worker.stage++;
+                this.worker.moveToNextStage();
                 this.runDelay = 10;
-                this.worker.printWorkersInventory();
             }
         }
     }

@@ -1,33 +1,25 @@
 package uu.mgag.entity.ai;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.client.Minecraft;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIMoveToBlock;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import uu.mgag.entity.EntityWorker;
 import uu.mgag.util.enums.EnumBuildingType;
-import uu.mgag.util.enums.EnumSupplyOffset;
 
-public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
+public class EntityAIMoveToReferencePoint extends EntityAIMoveToBlock
 {
 	private final EntityWorker worker;
-	private EnumSupplyOffset supplyChest;
+	private EnumBuildingType referencePoint;
 	public boolean active;
 
-	public EntityAIMoveToSupplyPoint(EntityWorker workerIn, double speedIn, EnumSupplyOffset side)
+	public EntityAIMoveToReferencePoint(EntityWorker workerIn, double speedIn, EnumBuildingType referencePoint) // TODO: refactor EnumBuildingType this
 	{
 		super(workerIn, speedIn, 64);
 		this.worker = workerIn;
-		this.supplyChest = side;
+		this.referencePoint = referencePoint;
 		this.active = false;
 		this.setMutexBits(7);
 	}
@@ -40,7 +32,7 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
 		if (this.worker.getDistanceSqToCenter(this.destinationBlock) <= 3.0D) 
 		{
 			active = false;
-            this.worker.moveToNextStage();
+			this.worker.moveToNextStage();
 			this.runDelay = 0;
 			return;
 		}
@@ -65,8 +57,7 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
     
 	public void startExecuting()
     {		
-		//Minecraft.getMinecraft().player.sendChatMessage(this.destinationBlock.getX() + ", " + this.destinationBlock.getY() + ", " + this.destinationBlock.getZ());
-		Minecraft.getMinecraft().player.sendChatMessage("Moving to Supply Point");
+		Minecraft.getMinecraft().player.sendChatMessage("Moving to Reference Point");
 		super.startExecuting();
     }
 	
@@ -76,21 +67,14 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
 	@Override
 	protected boolean shouldMoveTo(World worldIn, BlockPos pos)
 	{
-		BlockPos foundationPos = pos.subtract(supplyChest.getOffset());		
-		Block block = worldIn.getBlockState(foundationPos).getBlock();			
-		int type = block.getMetaFromState(worldIn.getBlockState(foundationPos));
-		
-		if (block == Block.REGISTRY.getObject(new ResourceLocation("mm:foundation_block")) && type == EnumBuildingType.SUPPLY_POINT.getMeta())
+		Block block = worldIn.getBlockState(pos).getBlock();		
+		int type = block.getMetaFromState(worldIn.getBlockState(pos));
+		if (block == Block.REGISTRY.getObject(new ResourceLocation("mm:foundation_block")) && type == referencePoint.getMeta())
 		{
 			return true;
 		}		
 		
 		return false;
-	}
-	
-	public void setSupplyChest(EnumSupplyOffset side)
-	{
-		this.supplyChest = side;
 	}
 
 }

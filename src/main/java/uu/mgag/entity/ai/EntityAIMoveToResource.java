@@ -30,7 +30,7 @@ public class EntityAIMoveToResource extends EntityAIMoveToBlock {
 		if (this.worker.getDistanceSqToCenter(this.destinationBlock) <= 3.0D) 
 		{
 			active = false;
-			this.worker.stage++;
+            this.worker.moveToNextStage();
 			this.runDelay = 0;
 			return;
 		}

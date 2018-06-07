@@ -49,21 +49,6 @@ public class EntityAIMineResource extends EntityAIBase {
     	this.getResourceInRange();
     }
 
-    private boolean hasBlock()
-    {
-        inventory = worker.getWorkerInventory();
-        // For now, done when worker has at least one log in inventory
-        for(int i=0; i<inventory.getSizeInventory(); i++)
-        {
-            if (Block.getBlockFromItem(inventory.getStackInSlot(i).getItem()) instanceof BlockLog)
-            {
-                Minecraft.getMinecraft().player.sendChatMessage("NPC has " + resourceType.toString());
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean getResourceInRange() {
         BlockPos pos = worker.getPos();
         inventory = worker.getWorkerInventory();
@@ -80,7 +65,7 @@ public class EntityAIMineResource extends EntityAIBase {
                         worker.getWorkerInventory().addItem(new ItemStack(resourceType));
                         Minecraft.getMinecraft().player.sendChatMessage("NPC acquired " + resourceType.toString());
                         this.active = false;
-                        this.worker.stage++;
+                        this.worker.moveToNextStage();
                         return true;
                     }
                 }

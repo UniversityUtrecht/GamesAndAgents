@@ -1,0 +1,12 @@
+package uu.mgag.entity;
+
+public enum EntityStage {
+	NONE, 
+	IDLE, 
+	MOVE_TO_SUPPLY_POINT, 
+	DEPOSIT_RESOURCES, 
+	GATHER_RESOURCES, 
+	POST_GATHER_RESOURCES, 
+	MOVE_TO_WORKING_REFERENCE_POINT, 
+	TAKE_TOOLS;
+}

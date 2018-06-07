@@ -24,8 +24,6 @@ public class EntityLumberjack extends EntityWorker implements INpc
 
 	public EntityLumberjack(World worldIn) {
 		super(worldIn);
-
-        this.stage = -1;
 	}
 
 	protected void initEntityAI()
@@ -50,6 +48,7 @@ public class EntityLumberjack extends EntityWorker implements INpc
 	
 	protected void updateAITasks()
 	{
+		/*
 		if (stage < 0 || stage > 3) stage = 0;
 		
 		switch (stage)
@@ -67,7 +66,7 @@ public class EntityLumberjack extends EntityWorker implements INpc
 				if (!this.accessChest.active) this.accessChest.active = true;
 				break;
 		}
-		
+		*/
 		super.updateAITasks();
 		// This is called every tick and should have the AI switching code (See Lumberjack)
 	}

@@ -16,27 +16,6 @@ import uu.mgag.util.enums.EnumSupplyOffset;
 
 public class EntityFarmer extends EntityWorker implements INpc
 {
-	
-	/*
-	public static enum EntityStage {
-		NONE(-1), 
-		IDLE(0), 
-		MOVE_TO_SUPPLY_POINT(1), 
-		DEPOSIT_RESOURCES(2), 
-		HARVEST_CROPS(3), 
-		REPLANT_CROPS(4), 
-		MOVE_TO_REFERENCE_POINT(5), 
-		TAKE_SEEDS(6);
-		
-		private final int value;
-
-		EntityStage(final int newValue) {
-            value = newValue;
-        }
-
-        public int getValue() { return value; }
-	}
-	*/
 	private EntityAIMoveToSupplyPoint moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.FOOD_INGREDIENTS);
 	private EntityAIAccessChest takeSeeds = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Items.WHEAT_SEEDS), 1, false);
 	private EntityAIAccessChest depositResources = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Items.WHEAT), 1, true);

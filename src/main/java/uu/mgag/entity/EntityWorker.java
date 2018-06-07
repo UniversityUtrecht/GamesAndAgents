@@ -84,7 +84,6 @@ public class EntityWorker extends EntityCreature implements INpc
 	
 	protected void updateAITasks()
     {
-		
 		super.updateAITasks();
     }
 	

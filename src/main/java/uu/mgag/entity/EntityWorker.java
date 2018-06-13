@@ -36,6 +36,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootTableList;
+import uu.mgag.util.enums.EnumEntityStage;
 
 public class EntityWorker extends EntityCreature implements INpc
 {
@@ -47,7 +48,7 @@ public class EntityWorker extends EntityCreature implements INpc
     protected boolean areAdditionalTasksSet;    
     
     // Stages will be unique to each role
-   	public EntityStage stage;
+   	public EnumEntityStage stage;
 
     public EntityWorker(World worldIn)
     {
@@ -56,7 +57,7 @@ public class EntityWorker extends EntityCreature implements INpc
         this.setSize(0.6F, 1.95F);
         ((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
         this.setCanPickUpLoot(false);
-        this.stage = EntityStage.NONE;
+        this.stage = EnumEntityStage.NONE;
     }
 	
 	protected void initEntityAI()
@@ -268,7 +269,7 @@ public class EntityWorker extends EntityCreature implements INpc
      */
     public void moveToNextStage()
     {
-    	stage = EntityStage.NONE;
+    	stage = EnumEntityStage.NONE;
     }
 
 }

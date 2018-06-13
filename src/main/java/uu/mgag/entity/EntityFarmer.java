@@ -11,6 +11,7 @@ import uu.mgag.entity.ai.EntityAIHarvestCrops;
 import uu.mgag.entity.ai.EntityAIMoveToReferencePoint;
 import uu.mgag.entity.ai.EntityAIMoveToSupplyPoint;
 import uu.mgag.entity.ai.EntityAIReplantCrops;
+import uu.mgag.util.enums.EnumEntityStage;
 import uu.mgag.util.enums.EnumBuildingType;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
@@ -118,31 +119,31 @@ public class EntityFarmer extends EntityWorker implements INpc
     {
     	switch (stage) {
 		case DEPOSIT_RESOURCES:
-			stage = EntityStage.TAKE_TOOLS;
+			stage = EnumEntityStage.TAKE_TOOLS;
 			break;
 		case GATHER_RESOURCES:
-			stage = EntityStage.POST_GATHER_RESOURCES;
+			stage = EnumEntityStage.POST_GATHER_RESOURCES;
 			break;
 		case IDLE:
-			stage = EntityStage.MOVE_TO_SUPPLY_POINT;
+			stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT;
 			break;
 		case MOVE_TO_SUPPLY_POINT:
-			stage = EntityStage.DEPOSIT_RESOURCES;
+			stage = EnumEntityStage.DEPOSIT_RESOURCES;
 			break;
 		case MOVE_TO_WORKING_REFERENCE_POINT:
-			stage = EntityStage.GATHER_RESOURCES;
+			stage = EnumEntityStage.GATHER_RESOURCES;
 			break;
 		case NONE:
-			stage = EntityStage.IDLE;
+			stage = EnumEntityStage.IDLE;
 			break;
 		case POST_GATHER_RESOURCES:
-			stage = EntityStage.MOVE_TO_SUPPLY_POINT;
+			stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT;
 			break;
 		case TAKE_TOOLS:
-			stage = EntityStage.MOVE_TO_WORKING_REFERENCE_POINT;
+			stage = EnumEntityStage.MOVE_TO_WORKING_REFERENCE_POINT;
 			break;
 		default:
-			stage = EntityStage.NONE;
+			stage = EnumEntityStage.NONE;
 			break;
 		}
     }

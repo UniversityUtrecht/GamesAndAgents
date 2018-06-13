@@ -1,6 +1,6 @@
-package uu.mgag.entity;
+package uu.mgag.util.enums;
 
-public enum EntityStage {
+public enum EnumEntityStage {
 	NONE, 
 	IDLE, 
 	MOVE_TO_SUPPLY_POINT, 

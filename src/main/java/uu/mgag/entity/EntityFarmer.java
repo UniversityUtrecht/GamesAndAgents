@@ -89,7 +89,7 @@ public class EntityFarmer extends EntityWorker implements INpc
 				this.replantCrops.active = true;
 			}
 			break;
-		case TAKE_TOOLS: // Take seets, TODO: take tools
+		case TAKE_TOOLS: // Take seeds, TODO: take tools
 			if (!this.takeSeeds.active)
 			{
 				this.takeSeeds.active = true;

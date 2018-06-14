@@ -7,6 +7,7 @@ import net.minecraft.entity.ai.EntityAIMoveToBlock;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -31,9 +32,17 @@ public class EntityAIReplantCrops extends EntityAIMoveToBlock {
      */
 	public boolean shouldExecute()
     {
-		return active && super.shouldExecute();
+		if(super.runDelay > 190) // 200+random is default runDelay for failed actions
+		{
+			this.active = false;
+			this.worker.moveToNextStage(); // TODO: horrible fix for failed objective
+			this.runDelay = 10;
+			System.out.println("Could not find suitable location, moving to next task.");
+			return false;
+		}
+		return active && super.shouldExecute() && this.worker.hasItemInInventory(Item.getIdFromItem(Items.WHEAT_SEEDS), 1);
     }
-	
+
 	@Override
 	/**
      * Returns whether an in-progress EntityAIBase should continue executing

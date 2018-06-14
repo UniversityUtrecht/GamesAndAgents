@@ -141,6 +141,20 @@ public class EntityWorker extends EntityCreature implements INpc
     	return workerInventory;
     }
     
+    public boolean hasItemInInventory(int itemId, int quantity)
+    {
+    	for(int i=0; i<workerInventory.getSizeInventory(); i++)
+    	{
+    		if(Item.getIdFromItem(workerInventory.getStackInSlot(i).getItem()) == itemId)
+    		{
+        		quantity -= workerInventory.getStackInSlot(i).getCount();
+        		if(quantity <= 0)
+        			return true;
+    		}
+    	}
+    	return false;
+    }
+    
     /**
      * Print a debug text of this workers inventory to standard output.
      */

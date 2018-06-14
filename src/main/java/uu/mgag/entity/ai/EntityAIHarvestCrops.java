@@ -32,6 +32,14 @@ public class EntityAIHarvestCrops extends EntityAIMoveToBlock {
      */
 	public boolean shouldExecute()
     {
+		if(super.runDelay > 190) // 200+random is default runDelay for failed actions
+		{
+			this.active = false;
+			this.worker.moveToNextStage(); // TODO: horrible fix for failed objective
+			this.runDelay = 10;
+			System.out.println("Could not find suitable resources, moving to next task.");
+			return false;
+		}
 		return active && super.shouldExecute();
     }
 	

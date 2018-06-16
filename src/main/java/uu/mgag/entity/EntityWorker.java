@@ -45,10 +45,12 @@ public class EntityWorker extends EntityCreature implements INpc
 	
 	protected final InventoryBasic workerInventory;
 
-    protected boolean areAdditionalTasksSet;    
+    protected boolean areAdditionalTasksSet;
     
     // Stages will be unique to each role
    	public EnumEntityStage stage;
+   	
+   	public BlockPos referencePointDestination = null;
 
     public EntityWorker(World worldIn)
     {

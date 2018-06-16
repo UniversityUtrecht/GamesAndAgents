@@ -33,6 +33,7 @@ public class EntityAIMoveToReferencePoint extends EntityAIMoveToBlock
 		{
 			active = false;
 			this.worker.moveToNextStage();
+			this.worker.referencePointDestination = this.destinationBlock;
 			this.runDelay = 0;
 			return;
 		}

@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import uu.mgag.entity.EntityWorker;
+import uu.mgag.util.enums.EnumBuildingType;
 
 public class EntityAIReplantCrops extends EntityAIMoveToBlock {
 	private final EntityWorker worker;
@@ -71,7 +72,9 @@ public class EntityAIReplantCrops extends EntityAIMoveToBlock {
                     {
                         if (itemstack.getItem() == Items.WHEAT_SEEDS) // TODO: generalize this to all crops
                         {
+                        	this.worker.world.setBlockState(blockPos.down(), Blocks.FARMLAND.getDefaultState());
                             this.worker.world.setBlockState(blockPos, Blocks.WHEAT.getDefaultState(), 3);
+                            
                             itemstack.shrink(1);
                             if (itemstack.isEmpty())
                             {
@@ -92,7 +95,7 @@ public class EntityAIReplantCrops extends EntityAIMoveToBlock {
 	@Override
 	protected boolean shouldMoveTo(World worldIn, BlockPos pos) {
 		Block block = worldIn.getBlockState(pos).getBlock();
-		if (block == Blocks.DIRT || block == Blocks.FARMLAND)
+		if (block == Blocks.DIRT || block == Blocks.FARMLAND || block == Blocks.GRASS)
         {
 			pos = pos.up();
             IBlockState iblockstate = worldIn.getBlockState(pos);
@@ -107,7 +110,13 @@ public class EntityAIReplantCrops extends EntityAIMoveToBlock {
 	
 	private boolean isBlockInsideFarm(World worldIn, BlockPos pos)
 	{
-		return true;
+		if(this.worker.referencePointDestination != null && 
+				pos.getX() <= this.worker.referencePointDestination.getX() &&  pos.getX() >= this.worker.referencePointDestination.getX()+EnumBuildingType.FARM.getSizeX() &&
+				pos.getY() >= this.worker.referencePointDestination.getY() &&  pos.getY() <= this.worker.referencePointDestination.getY()+EnumBuildingType.FARM.getSizeY() &&	
+				pos.getZ() <= this.worker.referencePointDestination.getZ() &&  pos.getZ() >= this.worker.referencePointDestination.getZ()+EnumBuildingType.FARM.getSizeZ())
+		{
+			return true;
+		}	
+		return false;
 	}
-
 }

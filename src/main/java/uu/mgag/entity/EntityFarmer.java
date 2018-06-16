@@ -119,7 +119,14 @@ public class EntityFarmer extends EntityWorker implements INpc
     {
     	switch (stage) {
 		case DEPOSIT_RESOURCES:
-			stage = EnumEntityStage.TAKE_TOOLS;
+			if(this.hasItemInInventory(Item.getIdFromItem(Items.WHEAT_SEEDS), 1)) // Already has seeds?
+			{
+				stage = EnumEntityStage.MOVE_TO_WORKING_REFERENCE_POINT;
+			}
+			else
+			{
+				stage = EnumEntityStage.TAKE_TOOLS;
+			}
 			break;
 		case GATHER_RESOURCES:
 			stage = EnumEntityStage.POST_GATHER_RESOURCES;

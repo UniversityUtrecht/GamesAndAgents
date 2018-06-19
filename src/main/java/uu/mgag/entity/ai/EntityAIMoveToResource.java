@@ -23,6 +23,15 @@ public class EntityAIMoveToResource extends EntityAIMoveToBlock {
     }
     
     /**
+	 * Set task to active and immediately start executing it.
+	 */
+	public void activate()
+	{
+		this.runDelay = 0;
+		this.active = true;
+	}
+    
+    /**
      * Keep ticking a continuous task that has already been started
      */
 	public void updateTask()

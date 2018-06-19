@@ -11,6 +11,7 @@ import uu.mgag.entity.ai.EntityAIHarvestCrops;
 import uu.mgag.entity.ai.EntityAIMoveToReferencePoint;
 import uu.mgag.entity.ai.EntityAIMoveToSupplyPoint;
 import uu.mgag.entity.ai.EntityAIReplantCrops;
+import uu.mgag.entity.ai.EntityAISpawnEntity;
 import uu.mgag.util.enums.EnumEntityStage;
 import uu.mgag.util.enums.EnumBuildingType;
 import uu.mgag.util.enums.EnumSupplyOffset;
@@ -23,6 +24,8 @@ public class EntityFarmer extends EntityWorker implements INpc
 	private EntityAIHarvestCrops harvestCrops = new EntityAIHarvestCrops(this, 0.6D, Blocks.WHEAT);
 	private EntityAIReplantCrops replantCrops = new EntityAIReplantCrops(this, 0.6D);
 	private EntityAIMoveToReferencePoint moveToReferencePoint = new EntityAIMoveToReferencePoint(this, 0.6D, EnumBuildingType.FARM);
+	
+	private EntityAISpawnEntity testAI = new EntityAISpawnEntity(this); // TODO: this.world should not work...
 
 	public EntityFarmer(World worldIn) {
 		super(worldIn);
@@ -47,53 +50,42 @@ public class EntityFarmer extends EntityWorker implements INpc
             this.tasks.addTask(2, replantCrops);
             this.tasks.addTask(2, moveToReferencePoint);
             this.tasks.addTask(2, takeSeeds);
+            
+            this.tasks.addTask(2, testAI);
         }
     }
 	
 	protected void updateAITasks()
 	{
+		System.out.println(stage + " " + this.moveToSupplyPoint.active);
 		switch (stage) {
 		case DEPOSIT_RESOURCES:
-			if (!this.depositResources.active) 
-			{
-				this.depositResources.active = true;
-			}
+			this.depositResources.activateIfNotRunning();
 			break;
 		case GATHER_RESOURCES:
-			if (!this.harvestCrops.active) 
-			{
-				this.harvestCrops.active = true;
-			}
+			this.harvestCrops.activateIfNotRunning();
 			break;
 		case IDLE:
 			moveToNextStage();
 			break;
 		case MOVE_TO_SUPPLY_POINT:
-			if (!this.moveToSupplyPoint.active) 
-			{
-				this.moveToSupplyPoint.active = true;
-			}
+			this.moveToSupplyPoint.activateIfNotRunning();
 			break;
 		case MOVE_TO_WORKING_REFERENCE_POINT:
-			if (!this.moveToReferencePoint.active) 
-			{
-				this.moveToReferencePoint.active = true;
-			}
+			this.moveToReferencePoint.activateIfNotRunning();
 			break;
 		case NONE:
 			moveToNextStage();
 			break;
 		case POST_GATHER_RESOURCES: // Replant crops
-			if (!this.replantCrops.active) 
-			{
-				this.replantCrops.active = true;
-			}
+			this.replantCrops.activateIfNotRunning();
 			break;
 		case TAKE_TOOLS: // Take seeds, TODO: take tools
-			if (!this.takeSeeds.active)
-			{
-				this.takeSeeds.active = true;
-			}
+			if(!this.testAI.active)
+				//this.testAI.active = true;
+				this.testAI.activate(this.getPosition().south());
+			
+			//this.takeSeeds.activateIfNotRunning();
 			break;
 		default:
 			moveToNextStage();

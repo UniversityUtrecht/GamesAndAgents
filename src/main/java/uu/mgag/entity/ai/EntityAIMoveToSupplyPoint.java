@@ -31,12 +31,26 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
 		this.active = false;
 		this.setMutexBits(7);
 	}
+	
+	/**
+	 * If task is currently not running, set task it to active and immediately start executing it.
+	 */
+	public void activateIfNotRunning()
+	{
+		if(this.active != true)
+		{
+			System.out.println("started move to supply point");
+			this.runDelay = 0;
+			this.active = true;
+		}
+	}
     
     /**
      * Keep ticking a continuous task that has already been started
      */
 	public void updateTask()
     {
+		System.out.println("QQQQQQQQQQQQQQQQQQQQQQ");
 		if (this.worker.getDistanceSqToCenter(this.destinationBlock) <= 3.0D) 
 		{
 			active = false;
@@ -52,7 +66,9 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
      */
 	public boolean shouldExecute()
     {
-		return active && super.shouldExecute();
+		boolean se = super.shouldExecute();
+		System.out.println(active + " " + se + " " + super.runDelay);
+		return active && se;
     }
 	
     /**
@@ -60,11 +76,13 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
      */
     public boolean shouldContinueExecuting()
     {
+    	System.out.println(active + " " + super.shouldContinueExecuting() + " " + super.runDelay);
         return active && super.shouldContinueExecuting();
     }
     
 	public void startExecuting()
     {		
+		System.out.println("startExecuting");
 		//Minecraft.getMinecraft().player.sendChatMessage(this.destinationBlock.getX() + ", " + this.destinationBlock.getY() + ", " + this.destinationBlock.getZ());
 		Minecraft.getMinecraft().player.sendChatMessage("Moving to Supply Point");
 		super.startExecuting();
@@ -76,6 +94,7 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
 	@Override
 	protected boolean shouldMoveTo(World worldIn, BlockPos pos)
 	{
+		System.out.println("shouldMoveTo");
 		BlockPos foundationPos = pos.subtract(supplyChest.getOffset());		
 		Block block = worldIn.getBlockState(foundationPos).getBlock();			
 		int type = block.getMetaFromState(worldIn.getBlockState(foundationPos));

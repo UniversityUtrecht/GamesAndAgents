@@ -4,14 +4,13 @@ import net.minecraft.entity.INpc;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import uu.mgag.entity.ai.EntityAIAccessChest;
 import uu.mgag.entity.ai.EntityAIHarvestCrops;
 import uu.mgag.entity.ai.EntityAIMoveToReferencePoint;
 import uu.mgag.entity.ai.EntityAIMoveToSupplyPoint;
 import uu.mgag.entity.ai.EntityAIReplantCrops;
-import uu.mgag.entity.ai.EntityAISpawnEntity;
 import uu.mgag.util.enums.EnumEntityStage;
 import uu.mgag.util.enums.EnumBuildingType;
 import uu.mgag.util.enums.EnumSupplyOffset;
@@ -24,21 +23,13 @@ public class EntityFarmer extends EntityWorker implements INpc
 	private EntityAIHarvestCrops harvestCrops = new EntityAIHarvestCrops(this, 0.6D, Blocks.WHEAT);
 	private EntityAIReplantCrops replantCrops = new EntityAIReplantCrops(this, 0.6D);
 	private EntityAIMoveToReferencePoint moveToReferencePoint = new EntityAIMoveToReferencePoint(this, 0.6D, EnumBuildingType.FARM);
-	
-	private EntityAISpawnEntity testAI = new EntityAISpawnEntity(this); // TODO: this.world should not work...
 
 	public EntityFarmer(World worldIn) {
 		super(worldIn);
 	}
-
-	protected void initEntityAI()
-    {
-		super.initEntityAI();
-		// Add any AI that doesn't need to be instantiated separately
-		// AI that needs an identifier goes in setAdditionalAItasks (See Lumberjack)
-    }
 	
-	private void setAdditionalAItasks()
+	@Override
+	protected void setAdditionalAItasks()
     {
 		if (!this.areAdditionalTasksSet)
         {
@@ -50,14 +41,12 @@ public class EntityFarmer extends EntityWorker implements INpc
             this.tasks.addTask(2, replantCrops);
             this.tasks.addTask(2, moveToReferencePoint);
             this.tasks.addTask(2, takeSeeds);
-            
-            this.tasks.addTask(2, testAI);
         }
     }
 	
+	@Override
 	protected void updateAITasks()
 	{
-		System.out.println(stage + " " + this.moveToSupplyPoint.active);
 		switch (stage) {
 		case DEPOSIT_RESOURCES:
 			this.depositResources.activateIfNotRunning();
@@ -81,11 +70,7 @@ public class EntityFarmer extends EntityWorker implements INpc
 			this.replantCrops.activateIfNotRunning();
 			break;
 		case TAKE_TOOLS: // Take seeds, TODO: take tools
-			if(!this.testAI.active)
-				//this.testAI.active = true;
-				this.testAI.activate(this.getPosition().south());
-			
-			//this.takeSeeds.activateIfNotRunning();
+			this.takeSeeds.activateIfNotRunning();
 			break;
 		default:
 			moveToNextStage();
@@ -97,15 +82,6 @@ public class EntityFarmer extends EntityWorker implements INpc
 		// This is called every tick and should have the AI switching code (See Lumberjack)
 	}
 
-	/**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
-    public void readEntityFromNBT(NBTTagCompound compound)
-    {
-        super.readEntityFromNBT(compound);
-        this.setAdditionalAItasks();
-    }
-    
     @Override
     public void moveToNextStage()
     {
@@ -145,5 +121,12 @@ public class EntityFarmer extends EntityWorker implements INpc
 			stage = EnumEntityStage.NONE;
 			break;
 		}
+    }
+    
+    public static EntityWorker spawnNewEntity(World world, BlockPos position) {
+    	EntityFarmer newEntity = new EntityFarmer(world);
+    	newEntity.setPosition(position.getX(), position.getY(), position.getZ());
+    	newEntity.setAdditionalAItasks();
+    	return newEntity;
     }
 }

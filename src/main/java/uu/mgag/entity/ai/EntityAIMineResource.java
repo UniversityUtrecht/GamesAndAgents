@@ -50,7 +50,7 @@ public class EntityAIMineResource extends EntityAIBase {
     }
 
     private boolean getResourceInRange() {
-        BlockPos pos = worker.getPos();
+        BlockPos pos = worker.getPosition();
         inventory = worker.getWorkerInventory();
 
         for (int x = pos.getX()-1; x < pos.getX()+1; x++)

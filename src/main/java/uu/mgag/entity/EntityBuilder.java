@@ -19,7 +19,7 @@ public class EntityBuilder extends EntityWorker implements INpc
 		// AI that needs an identifier goes in setAdditionalAItasks (See Lumberjack)
     }
 	
-	private void setAdditionalAItasks()
+	protected void setAdditionalAItasks()
     {
 		
     }
@@ -38,4 +38,10 @@ public class EntityBuilder extends EntityWorker implements INpc
         super.readEntityFromNBT(compound);
         this.setAdditionalAItasks();
     }
+
+	@Override
+	public void moveToNextStage() {
+		// TODO Auto-generated method stub
+		
+	}
 }

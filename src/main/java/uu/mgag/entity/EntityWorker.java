@@ -38,7 +38,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootTableList;
 import uu.mgag.util.enums.EnumEntityStage;
 
-public class EntityWorker extends EntityCreature implements INpc
+public abstract class EntityWorker extends EntityCreature implements INpc
 {
 	protected static final Logger LOGGER = LogManager.getLogger();
 	protected int randomTickDivider;
@@ -47,11 +47,10 @@ public class EntityWorker extends EntityCreature implements INpc
 
     protected boolean areAdditionalTasksSet;
     
-    // Stages will be unique to each role
    	public EnumEntityStage stage;
    	
    	public BlockPos referencePointDestination = null;
-
+   	
     public EntityWorker(World worldIn)
     {
         super(worldIn);
@@ -62,21 +61,28 @@ public class EntityWorker extends EntityCreature implements INpc
         this.stage = EnumEntityStage.NONE;
     }
 	
+    protected abstract void setAdditionalAItasks();
+    
+   	/**
+     * Move to the next appropriate stage in the state machine.
+     */
+    public abstract void moveToNextStage();
+    
+    @Override
 	protected void initEntityAI()
     {
 		tasks.taskEntries.clear();
         this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityZombie.class, 8.0F, 0.6D, 0.6D));
-        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityEvoker.class, 12.0F, 0.8D, 0.8D));
-        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityVindicator.class, 8.0F, 0.8D, 0.8D));
-        this.tasks.addTask(1, new EntityAIAvoidEntity(this, EntityVex.class, 8.0F, 0.6D, 0.6D));                
+        this.tasks.addTask(1, new EntityAIAvoidEntity<EntityZombie>(this, EntityZombie.class, 8.0F, 0.6D, 0.6D));
+        this.tasks.addTask(1, new EntityAIAvoidEntity<EntityEvoker>(this, EntityEvoker.class, 12.0F, 0.8D, 0.8D));
+        this.tasks.addTask(1, new EntityAIAvoidEntity<EntityVindicator>(this, EntityVindicator.class, 8.0F, 0.8D, 0.8D));
+        this.tasks.addTask(1, new EntityAIAvoidEntity<EntityVex>(this, EntityVex.class, 8.0F, 0.6D, 0.6D));                
         this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
         this.tasks.addTask(9, new EntityAIWanderAvoidWater(this, 0.6D));
         this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F)); 
     }
-	
-	private void setAdditionalAItasks() {}
-	
+
+	@Override
 	protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
@@ -85,53 +91,38 @@ public class EntityWorker extends EntityCreature implements INpc
         this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(128.0D);
     }
 	
-	protected void updateAITasks()
-    {
-		super.updateAITasks();
-    }
-	
-	/**
-     * Determines if an entity can be despawned, used on idle far away entities
-     */
+	@Override
     protected boolean canDespawn()
     {
         return false;
     }
     
+    @Override
     protected SoundEvent getAmbientSound()
     {
         return SoundEvents.ENTITY_VILLAGER_AMBIENT;
     }
 
+    @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn)
     {
         return SoundEvents.ENTITY_VILLAGER_HURT;
     }
 
+    @Override
     protected SoundEvent getDeathSound()
     {
         return SoundEvents.ENTITY_VILLAGER_DEATH;
     }
 
+    @Override
     @Nullable
     protected ResourceLocation getLootTable()
     {
         return LootTableList.ENTITIES_VILLAGER;
     }
     
-    public World getWorld()
-    {
-        return this.world;
-    }
-
-    public BlockPos getPos()
-    {
-        return new BlockPos(this);
-    }
-    
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
+    @Override
     public void readEntityFromNBT(NBTTagCompound compound)
     {
         super.readEntityFromNBT(compound);
@@ -143,6 +134,12 @@ public class EntityWorker extends EntityCreature implements INpc
     	return workerInventory;
     }
     
+    /**
+     * Check if NPC has enough of given item in inventory.
+     * @param itemId of item to check
+     * @param quantity of the required item
+     * @return true if NPC has enough of this item, false otherwise
+     */
     public boolean hasItemInInventory(int itemId, int quantity)
     {
     	for(int i=0; i<workerInventory.getSizeInventory(); i++)
@@ -278,14 +275,6 @@ public class EntityWorker extends EntityCreature implements INpc
         		}
         	}
         }
-    }
-    
-    /**
-     * Move to the next appropriate stage in the state machine.
-     */
-    public void moveToNextStage()
-    {
-    	stage = EnumEntityStage.NONE;
     }
 
 }

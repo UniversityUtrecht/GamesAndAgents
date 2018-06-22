@@ -59,7 +59,7 @@ public class EntityAIChopWood extends EntityAIMoveToBlock {
         super.updateTask();
 
         this.worker.getLookHelper().setLookPosition((double)this.destinationBlock.getX() + 0.5D, (double)(this.destinationBlock.getY() + 1), (double)this.destinationBlock.getZ() + 0.5D, 10.0F, (float)this.worker.getVerticalFaceSpeed());
-        if (worker.getPos().distanceSq(destinationBlock) < 2)
+        if (worker.getPos().distanceSq(destinationBlock) < 20)
         {
             IBlockState blockState = this.worker.world.getBlockState(destinationBlock);
 
@@ -78,10 +78,12 @@ public class EntityAIChopWood extends EntityAIMoveToBlock {
 
     @Override
     protected boolean shouldMoveTo(World worldIn, BlockPos pos) {
-        Block block = worldIn.getBlockState(pos).getBlock();
-        if (block == Blocks.LOG)
-        {
-            return true;
+        for (int i = -1; i < 6; i++) {
+            destinationBlock = new BlockPos(pos.getX(), pos.getY() + i, pos.getZ());
+            Block block = worldIn.getBlockState(destinationBlock).getBlock();
+            if (block == Blocks.LOG) {
+                return true;
+            }
         }
         return false;
     }

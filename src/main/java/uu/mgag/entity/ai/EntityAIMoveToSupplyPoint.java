@@ -37,7 +37,7 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
 	 */
 	public void activateIfNotRunning()
 	{
-		if(this.active != true)
+		if(this.active != true || this.runDelay > 190)
 		{
 			this.runDelay = 0;
 			this.active = true;

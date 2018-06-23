@@ -27,6 +27,18 @@ public class EntityAIReplantCrops extends EntityAIMoveToBlock {
 		
     }
 	
+	/**
+	 * If task is currently not running, set task it to active and immediately start executing it.
+	 */
+	public void activateIfNotRunning()
+	{
+		if(this.active != true)
+		{
+			this.runDelay = 0;
+			this.active = true;
+		}
+	}
+	
 	@Override
 	/**
      * Returns whether the EntityAIBase should begin execution.

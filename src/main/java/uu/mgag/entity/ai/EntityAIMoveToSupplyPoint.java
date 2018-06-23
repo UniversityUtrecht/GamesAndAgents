@@ -31,6 +31,18 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
 		this.active = false;
 		this.setMutexBits(7);
 	}
+	
+	/**
+	 * If task is currently not running, set task it to active and immediately start executing it.
+	 */
+	public void activateIfNotRunning()
+	{
+		if(this.active != true)
+		{
+			this.runDelay = 0;
+			this.active = true;
+		}
+	}
     
     /**
      * Keep ticking a continuous task that has already been started
@@ -64,7 +76,7 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
     }
     
 	public void startExecuting()
-    {		
+    {
 		//Minecraft.getMinecraft().player.sendChatMessage(this.destinationBlock.getX() + ", " + this.destinationBlock.getY() + ", " + this.destinationBlock.getZ());
 		Minecraft.getMinecraft().player.sendChatMessage("Moving to Supply Point");
 		super.startExecuting();

@@ -23,6 +23,18 @@ public class EntityAIMoveToReferencePoint extends EntityAIMoveToBlock
 		this.active = false;
 		this.setMutexBits(7);
 	}
+	
+	/**
+	 * If task is currently not running, set task it to active and immediately start executing it.
+	 */
+	public void activateIfNotRunning()
+	{
+		if(this.active != true)
+		{
+			this.runDelay = 0;
+			this.active = true;
+		}
+	}
     
     /**
      * Keep ticking a continuous task that has already been started

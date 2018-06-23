@@ -3,7 +3,9 @@ package uu.mgag.util.enums;
 public enum EnumEntityStage {
 	NONE, 
 	IDLE, 
-	MOVE_TO_SUPPLY_POINT, 
+	MOVE_TO_SUPPLY_POINT,
+	MOVE_TO_BUILD_SITE,
+	BUILD,
 	DEPOSIT_RESOURCES, 
 	GATHER_RESOURCES, 
 	POST_GATHER_RESOURCES, 

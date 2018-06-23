@@ -4,7 +4,7 @@ import net.minecraft.entity.INpc;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import uu.mgag.entity.ai.EntityAIAccessChest;
 import uu.mgag.entity.ai.EntityAIHarvestCrops;
@@ -27,15 +27,9 @@ public class EntityFarmer extends EntityWorker implements INpc
 	public EntityFarmer(World worldIn) {
 		super(worldIn);
 	}
-
-	protected void initEntityAI()
-    {
-		super.initEntityAI();
-		// Add any AI that doesn't need to be instantiated separately
-		// AI that needs an identifier goes in setAdditionalAItasks (See Lumberjack)
-    }
 	
-	private void setAdditionalAItasks()
+	@Override
+	protected void setAdditionalAItasks()
     {
 		if (!this.areAdditionalTasksSet)
         {
@@ -50,50 +44,33 @@ public class EntityFarmer extends EntityWorker implements INpc
         }
     }
 	
+	@Override
 	protected void updateAITasks()
 	{
 		switch (stage) {
 		case DEPOSIT_RESOURCES:
-			if (!this.depositResources.active) 
-			{
-				this.depositResources.active = true;
-			}
+			this.depositResources.activateIfNotRunning();
 			break;
 		case GATHER_RESOURCES:
-			if (!this.harvestCrops.active) 
-			{
-				this.harvestCrops.active = true;
-			}
+			this.harvestCrops.activateIfNotRunning();
 			break;
 		case IDLE:
 			moveToNextStage();
 			break;
 		case MOVE_TO_SUPPLY_POINT:
-			if (!this.moveToSupplyPoint.active) 
-			{
-				this.moveToSupplyPoint.active = true;
-			}
+			this.moveToSupplyPoint.activateIfNotRunning();
 			break;
 		case MOVE_TO_WORKING_REFERENCE_POINT:
-			if (!this.moveToReferencePoint.active) 
-			{
-				this.moveToReferencePoint.active = true;
-			}
+			this.moveToReferencePoint.activateIfNotRunning();
 			break;
 		case NONE:
 			moveToNextStage();
 			break;
 		case POST_GATHER_RESOURCES: // Replant crops
-			if (!this.replantCrops.active) 
-			{
-				this.replantCrops.active = true;
-			}
+			this.replantCrops.activateIfNotRunning();
 			break;
 		case TAKE_TOOLS: // Take seeds, TODO: take tools
-			if (!this.takeSeeds.active)
-			{
-				this.takeSeeds.active = true;
-			}
+			this.takeSeeds.activateIfNotRunning();
 			break;
 		default:
 			moveToNextStage();
@@ -105,15 +82,6 @@ public class EntityFarmer extends EntityWorker implements INpc
 		// This is called every tick and should have the AI switching code (See Lumberjack)
 	}
 
-	/**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
-    public void readEntityFromNBT(NBTTagCompound compound)
-    {
-        super.readEntityFromNBT(compound);
-        this.setAdditionalAItasks();
-    }
-    
     @Override
     public void moveToNextStage()
     {
@@ -153,5 +121,12 @@ public class EntityFarmer extends EntityWorker implements INpc
 			stage = EnumEntityStage.NONE;
 			break;
 		}
+    }
+    
+    public static EntityWorker spawnNewEntity(World world, BlockPos position) {
+    	EntityFarmer newEntity = new EntityFarmer(world);
+    	newEntity.setPosition(position.getX(), position.getY(), position.getZ());
+    	newEntity.setAdditionalAItasks();
+    	return newEntity;
     }
 }

@@ -35,7 +35,7 @@ public class EntityLumberjack extends EntityWorker implements INpc
 		// AI that needs an identifier goes in setAdditionalAItasks (See Lumberjack)
     }
 	
-	private void setAdditionalAItasks()
+	protected void setAdditionalAItasks()
     {
         if (!this.areAdditionalTasksSet)
         {
@@ -94,7 +94,7 @@ public class EntityLumberjack extends EntityWorker implements INpc
         super.readEntityFromNBT(compound);
         this.setAdditionalAItasks();
     }
-
+    
     @Override
     public void moveToNextStage() {
         switch(stage) {

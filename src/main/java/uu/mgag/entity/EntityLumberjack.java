@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.INpc;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import uu.mgag.entity.ai.*;
@@ -12,15 +13,16 @@ import uu.mgag.util.enums.EnumEntityStage;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
 public class EntityLumberjack extends EntityWorker implements INpc
-{	
-	private EntityAIMoveToSupplyPoint moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.BUILDING_MATERIALS);
-	private EntityAIAccessChest accessChest = new EntityAIAccessChest(this, 0.6D, Block.getIdFromBlock(Blocks.LOG), 1, true);
+{
+    private int maxResourceCount = 12;
+
+    private EntityAIMoveToSupplyPoint moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.BUILDING_MATERIALS);
+	private EntityAIAccessChest accessChest = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Item.getItemFromBlock(Blocks.LOG)), maxResourceCount, true);
 	private EntityAIMineResource mineResource = new EntityAIMineResource(this, 0.6D, Blocks.LOG);
-    private EntityAIChopWood chopWood = new EntityAIChopWood(this, 0.6D, Blocks.LOG);
+    private EntityAIChopWood chopWood = new EntityAIChopWood(this, 0.6D, Blocks.LOG, maxResourceCount);
     private EntityAIMoveToResource moveToResource = new EntityAIMoveToResource(this, 0.6D, Blocks.LOG);
-	
-	// STAGES: 0 = movetoresource, 1 = mine, 2 = movetosupply, 3 = deposit
-	
+
+
 
 	public EntityLumberjack(World worldIn) {
 		super(worldIn);
@@ -41,7 +43,7 @@ public class EntityLumberjack extends EntityWorker implements INpc
             
             //this.tasks.addTask(2, moveToResource);
             this.tasks.addTask(2, moveToSupplyPoint);
-            //this.tasks.addTask(2, accessChest);
+            this.tasks.addTask(2, accessChest);
             this.tasks.addTask(2, chopWood);
         }		
     }
@@ -49,10 +51,17 @@ public class EntityLumberjack extends EntityWorker implements INpc
 	protected void updateAITasks()
 	{
 	    switch(stage) {
-            case DEPOSIT_RESOURCES:
+            case MOVE_TO_SUPPLY_POINT:
                 if (!this.moveToSupplyPoint.active)
                 {
                     this.moveToSupplyPoint.active = true;
+                    Minecraft.getMinecraft().player.sendChatMessage("Lumberjack: new stage: MOVE_TO_SUPPLY_POINT");
+                }
+                break;
+            case DEPOSIT_RESOURCES:
+                if (!this.accessChest.active)
+                {
+                    this.accessChest.active = true;
                     Minecraft.getMinecraft().player.sendChatMessage("Lumberjack: new stage: DEPOSIT_RESOURCES");
                 }
                 break;
@@ -94,6 +103,9 @@ public class EntityLumberjack extends EntityWorker implements INpc
                 break;
             case GATHER_RESOURCES:
                 // TODO: Check if it has enough resources before depositing
+                stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT;
+                break;
+            case MOVE_TO_SUPPLY_POINT:
                 stage = EnumEntityStage.DEPOSIT_RESOURCES;
                 break;
             case IDLE:

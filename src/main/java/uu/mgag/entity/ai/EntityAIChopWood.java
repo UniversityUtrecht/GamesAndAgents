@@ -10,6 +10,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -20,13 +21,15 @@ public class EntityAIChopWood extends EntityAIMoveToBlock {
     private final Block resourceType;
     private InventoryBasic inventory;
     public boolean active;
+    private final int maxResourceCount;
 
-    public EntityAIChopWood(EntityWorker workerIn, double speedIn, Block resourceTypeIn) {
+    public EntityAIChopWood(EntityWorker workerIn, double speedIn, Block resourceTypeIn, int maxResourceCount) {
         super(workerIn, speedIn, 32);
         worker = workerIn;
         resourceType = resourceTypeIn;
         inventory = worker.getWorkerInventory();
         this.active = false;
+        this.maxResourceCount = maxResourceCount;
         this.setMutexBits(7);
     }
 
@@ -51,7 +54,8 @@ public class EntityAIChopWood extends EntityAIMoveToBlock {
      */
     public boolean shouldContinueExecuting()
     {
-        return active && super.shouldContinueExecuting();
+
+        return active &&super.shouldContinueExecuting();
     }
 
     public void updateTask()
@@ -66,19 +70,24 @@ public class EntityAIChopWood extends EntityAIMoveToBlock {
             Block block = blockState.getBlock();
             if (block == resourceType && block instanceof BlockLog)
             {
-                this.worker.getWorkerInventory().addItem(new ItemStack(resourceType, 1));
-                worker.world.destroyBlock(destinationBlock, false);
+                this.worker.addItemToInventory(Item.getItemFromBlock(resourceType), 1);
+                this.worker.world.destroyBlock(destinationBlock, false);
                 Minecraft.getMinecraft().player.sendChatMessage("NPC acquired " + resourceType.toString());
-                this.active = false;
-                this.worker.moveToNextStage();
                 this.runDelay = 10;
             }
+        }
+
+        if (this.worker.getItemAmountInInventory(Item.getItemFromBlock(resourceType)) >= maxResourceCount)
+        {
+            this.active = false;
+            this.worker.moveToNextStage();
+            this.runDelay = 10;
         }
     }
 
     @Override
     protected boolean shouldMoveTo(World worldIn, BlockPos pos) {
-        for (int i = -1; i < 6; i++) {
+        for (int i = -1; i < 5; i++) {
             destinationBlock = new BlockPos(pos.getX(), pos.getY() + i, pos.getZ());
             Block block = worldIn.getBlockState(destinationBlock).getBlock();
             if (block == Blocks.LOG) {

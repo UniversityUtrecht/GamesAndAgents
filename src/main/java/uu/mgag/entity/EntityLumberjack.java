@@ -51,7 +51,7 @@ public class EntityLumberjack extends EntityWorker implements INpc
 	protected void updateAITasks()
 	{
 	    switch(stage) {
-            case MOVE_TO_SUPPLY_POINT:
+            case MOVE_TO_SUPPLY_POINT_BUILD:
                 if (!this.moveToSupplyPoint.active)
                 {
                     this.moveToSupplyPoint.active = true;
@@ -103,9 +103,9 @@ public class EntityLumberjack extends EntityWorker implements INpc
                 break;
             case GATHER_RESOURCES:
                 // TODO: Check if it has enough resources before depositing
-                stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT;
+                stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT_BUILD;
                 break;
-            case MOVE_TO_SUPPLY_POINT:
+            case MOVE_TO_SUPPLY_POINT_BUILD:
                 stage = EnumEntityStage.DEPOSIT_RESOURCES;
                 break;
             case IDLE:

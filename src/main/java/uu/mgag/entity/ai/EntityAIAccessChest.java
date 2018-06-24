@@ -112,5 +112,10 @@ public class EntityAIAccessChest extends EntityAIMoveToBlock
         	this.runDelay = 0;
         }
     }
+	
+	public void setQuantity(int quantity)
+	{
+		this.quantity = quantity;
+	}
 
 }

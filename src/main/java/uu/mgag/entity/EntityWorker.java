@@ -47,9 +47,10 @@ public abstract class EntityWorker extends EntityCreature implements INpc
 
     protected boolean areAdditionalTasksSet;
     
-   	public EnumEntityStage stage;
-   	
+   	public EnumEntityStage stage;   	
    	public BlockPos referencePointDestination = null;
+   	public BlockPos homePoint = null;
+   	public BlockPos workPoint = null;
    	
     public EntityWorker(World worldIn)
     {
@@ -78,7 +79,6 @@ public abstract class EntityWorker extends EntityCreature implements INpc
         this.tasks.addTask(1, new EntityAIAvoidEntity<EntityVindicator>(this, EntityVindicator.class, 8.0F, 0.8D, 0.8D));
         this.tasks.addTask(1, new EntityAIAvoidEntity<EntityVex>(this, EntityVex.class, 8.0F, 0.6D, 0.6D));                
         this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
-        this.tasks.addTask(9, new EntityAIWanderAvoidWater(this, 0.6D));
         this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F)); 
     }
 

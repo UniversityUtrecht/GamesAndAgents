@@ -57,7 +57,7 @@ public class EntityFarmer extends EntityWorker implements INpc
 		case IDLE:
 			moveToNextStage();
 			break;
-		case MOVE_TO_SUPPLY_POINT:
+		case MOVE_TO_SUPPLY_POINT_FOOD:
 			this.moveToSupplyPoint.activateIfNotRunning();
 			break;
 		case MOVE_TO_WORKING_REFERENCE_POINT:
@@ -100,9 +100,9 @@ public class EntityFarmer extends EntityWorker implements INpc
 			stage = EnumEntityStage.POST_GATHER_RESOURCES;
 			break;
 		case IDLE:
-			stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT;
+			stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT_FOOD;
 			break;
-		case MOVE_TO_SUPPLY_POINT:
+		case MOVE_TO_SUPPLY_POINT_FOOD:
 			stage = EnumEntityStage.DEPOSIT_RESOURCES;
 			break;
 		case MOVE_TO_WORKING_REFERENCE_POINT:
@@ -112,7 +112,7 @@ public class EntityFarmer extends EntityWorker implements INpc
 			stage = EnumEntityStage.IDLE;
 			break;
 		case POST_GATHER_RESOURCES:
-			stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT;
+			stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT_FOOD;
 			break;
 		case TAKE_TOOLS:
 			stage = EnumEntityStage.MOVE_TO_WORKING_REFERENCE_POINT;
@@ -121,12 +121,5 @@ public class EntityFarmer extends EntityWorker implements INpc
 			stage = EnumEntityStage.NONE;
 			break;
 		}
-    }
-    
-    public static EntityWorker spawnNewEntity(World world, BlockPos position) {
-    	EntityFarmer newEntity = new EntityFarmer(world);
-    	newEntity.setPosition(position.getX(), position.getY(), position.getZ());
-    	newEntity.setAdditionalAItasks();
-    	return newEntity;
     }
 }

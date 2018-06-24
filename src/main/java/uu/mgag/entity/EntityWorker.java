@@ -153,6 +153,65 @@ public abstract class EntityWorker extends EntityCreature implements INpc
     	}
     	return false;
     }
+
+    /**
+     * Adds an amount of a type of item to the inventory. Creates a new stack if it doesn't exist yet,
+     * adds to an existing stack if present, and creates new stacks if stacks get filled up.
+     * @param item that has to be added.
+     * @param amount of items to add to inventory.
+     */
+    public void addItemToInventory (Item item, int amount)
+    {
+        for (int i = 0; i < workerInventory.getSizeInventory(); i++)
+        {
+            ItemStack currentStack = workerInventory.getStackInSlot(i);
+            if(Item.getIdFromItem(currentStack.getItem()) == Item.getIdFromItem(item))
+            {
+                int maxStackSize = currentStack.getMaxStackSize();
+                int currentCount = currentStack.getCount();
+                int canBeFilled = maxStackSize - currentCount;
+
+                // Continue looking if stack is full
+                if (canBeFilled <= 0) continue;
+
+                // Add to current stack as much as possible
+                if (canBeFilled >= amount) {
+                    workerInventory.setInventorySlotContents(i, new ItemStack(item, currentStack.getCount() + amount));
+                    amount = 0;
+                }
+                // Fill partial stack and leave amount for potential other stacks
+                else
+                {
+                    workerInventory.setInventorySlotContents(i, new ItemStack(item, currentStack.getCount() + canBeFilled ));
+                    amount -= canBeFilled;
+                }
+
+                //System.out.println("Current stack: " + currentStack.getDisplayName() + " and size: " + workerInventory.getStackInSlot(i).getCount());
+                // If amount filled, break
+                if (amount == 0)
+                    break;
+            }
+        }
+
+        if (amount > 0) {
+            workerInventory.addItem(new ItemStack(item, amount));
+            //System.out.println("Created new stack: " + item.getUnlocalizedName() + " and size: " + amount);
+        }
+    }
+
+    public int getItemAmountInInventory(Item item) {
+        int amount = 0;
+
+        for (int i = 0; i < workerInventory.getSizeInventory(); i++)
+        {
+            ItemStack currentStack = workerInventory.getStackInSlot(i);
+            if(Item.getIdFromItem(currentStack.getItem()) == Item.getIdFromItem(item))
+            {
+                amount += currentStack.getCount();
+            }
+        }
+        return amount;
+    }
     
     /**
      * Print a debug text of this workers inventory to standard output.

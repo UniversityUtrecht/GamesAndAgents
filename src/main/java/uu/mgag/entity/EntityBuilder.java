@@ -31,6 +31,8 @@ import uu.mgag.util.TownStats;
 import uu.mgag.util.enums.EnumBuildingType;
 import uu.mgag.util.enums.EnumEntityStage;
 import uu.mgag.util.enums.EnumEntityType;
+import uu.mgag.util.enums.EnumHallOffset;
+import uu.mgag.util.enums.EnumSmithOffset;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
 
@@ -332,9 +334,9 @@ public class EntityBuilder extends EntityWorker implements INpc
 			case MINE:
 				return (TownStats.res_stone < 20 && TownStats.res_food >= 50);
 			case BLACKSMITH:
+				return (TownStats.res_stone >= 30 && TownStats.res_wood >= 30 && TownStats.res_food >= 50);
+			default:
 				return false;
-				default:
-					return false;
 		}
 	}
     
@@ -378,8 +380,14 @@ public class EntityBuilder extends EntityWorker implements INpc
         {
             BlockPos blockpos2 = template.getSize();            
 
-            this.workPoint = blockpos.add(new BlockPos(blockpos2.getX(), 0, blockpos2.getZ()));        	
-        	Minecraft.getMinecraft().player.sendChatMessage("SpawnWork: " + this.workPoint.getX() + "," + this.workPoint.getY() + "," + this.workPoint.getZ());
+            this.workPoint = blockpos.add(new BlockPos(blockpos2.getX(), 0, blockpos2.getZ()));
+            
+            if (nextBuilding == EnumBuildingType.TOWN_HALL)
+        	{
+            	this.homePoint = this.workPoint.add(EnumHallOffset.BUILDER_SPOT.getOffset()).subtract(new BlockPos(1,1,1));
+            	this.moveToHome.setDestination(homePoint);	
+        	}
+            
             //Minecraft.getMinecraft().player.sendChatMessage(blockpos2.toString());
             
             PlacementSettings placementsettings = (new PlacementSettings()).setMirror(Mirror.NONE).setRotation(Rotation.NONE).setIgnoreEntities(true).setChunk((ChunkPos)null).setReplacedBlock((Block)null).setIgnoreStructureBlock(false);

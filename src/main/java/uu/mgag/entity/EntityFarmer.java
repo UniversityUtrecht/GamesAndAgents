@@ -21,7 +21,7 @@ public class EntityFarmer extends EntityWorker implements INpc
 {
 	private EntityAIMoveToSupplyPoint moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.FOOD_INGREDIENTS);
 	private EntityAIAccessChest takeSeeds = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Items.WHEAT_SEEDS), 1, false);
-	private EntityAIAccessChest depositResources = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Items.WHEAT), 1, true);
+	private EntityAIAccessChest depositResources = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Items.WHEAT), 5, true);
 	private EntityAIHarvestCrops harvestCrops = new EntityAIHarvestCrops(this, 0.6D, Blocks.WHEAT);
 	private EntityAIReplantCrops replantCrops = new EntityAIReplantCrops(this, 0.6D);
     private EntityAIMoveToBlockPos moveToWork = new EntityAIMoveToBlockPos(this, 0.6D);     

@@ -11,4 +11,14 @@ public class TownStats
 	public static int count_farm = 0;
 	public static int count_lumber = 0;
 	public static int count_mine = 0;
+
+	public static int unit_count_farmer = 0;
+	public static int unit_count_lumberjack = 0;
+	public static int unit_count_miner = 0;
+	public static int unit_count_blacksmith = 0;
+
+	public static int getUnitCount()
+	{
+		return unit_count_farmer + unit_count_lumberjack + unit_count_miner + unit_count_blacksmith;
+	}
 }

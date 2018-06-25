@@ -29,7 +29,7 @@ public class EntityMiner extends EntityWorker implements INpc
 	
 	private EntityAIMoveToSupplyPoint moveToSupplyPointOres = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.ORES_MINERALS);
 	private EntityAIMoveToSupplyPoint moveToSupplyPointBuild = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.BUILDING_MATERIALS);
-	private EntityAIAccessChest depositResourcesStone = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Item.getItemFromBlock(Blocks.COBBLESTONE)), 1, true);
+	private EntityAIAccessChest depositResourcesStone = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Item.getItemFromBlock(Blocks.COBBLESTONE)), 5, true);
 	private EntityAIAccessChest depositResourcesIron = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Item.getItemFromBlock(Blocks.IRON_ORE)), 1, true);
 	private EntityAIMoveToBlockPos moveToWork = new EntityAIMoveToBlockPos(this, 0.6D);
 

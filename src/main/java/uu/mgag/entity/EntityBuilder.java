@@ -89,7 +89,7 @@ public class EntityBuilder extends EntityWorker implements INpc
                 moveToNextStage();
                 break;
             case DECIDE_NEXT_BUILD:
-            	this.nextBuilding = this.decideNext();
+            	this.nextBuilding = this.decideNextBuilding();
             	if (this.nextBuilding != null) moveToNextStage();
             	break;
             case RETURN_HOME:
@@ -231,17 +231,101 @@ public class EntityBuilder extends EntityWorker implements INpc
     	{
     	case FARM:
     		this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.FARMER));
+    		TownStats.unit_count_farmer++;
     		break;
     	case NO_BUILDING:
 			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.LUMBERJACK));
+			TownStats.unit_count_lumberjack++;
 			break;
     	case MINE:
 			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.MINER));
+			TownStats.unit_count_miner++;
 			break;    		
     	default:
     		break;
     	}
     }
+
+    private EnumBuildingType decideNextBuilding()
+	{
+		float unitCount = TownStats.getUnitCount();
+
+		if (TownStats.count_supply == 0 && checkSufficientResources(EnumBuildingType.SUPPLY_POINT))
+		{
+			needBuild = true;
+			needSpawn = false;
+			return EnumBuildingType.SUPPLY_POINT;
+		}
+		if (TownStats.count_hall == 0 && checkSufficientResources(EnumBuildingType.TOWN_HALL))
+		{
+			needBuild = true;
+			needSpawn = false;
+			return EnumBuildingType.TOWN_HALL;
+		}
+		if (unitCount == 0 && checkSufficientResources(EnumBuildingType.FARM))
+		{
+			needBuild = true;
+			needSpawn = true;
+			return EnumBuildingType.FARM;
+		}
+		if (TownStats.unit_count_farmer / unitCount <= 0.5
+				&& TownStats.unit_count_farmer < 8
+				&& checkSufficientResources(EnumBuildingType.FARM))
+		{
+			needBuild = true;
+			needSpawn = true;
+			return EnumBuildingType.FARM;
+		}
+		if (TownStats.unit_count_lumberjack / unitCount <= 0.25
+				&& TownStats.unit_count_lumberjack < 4
+				&& checkSufficientResources(EnumBuildingType.NO_BUILDING))
+		{
+			needBuild = false;
+			needSpawn = true;
+			return EnumBuildingType.NO_BUILDING;
+		}
+		if (TownStats.unit_count_miner / unitCount <= 0.2
+				&& TownStats.unit_count_miner < 3
+				&& checkSufficientResources(EnumBuildingType.MINE))
+		{
+			needBuild = true;
+			needSpawn = true;
+			return EnumBuildingType.MINE;
+		}
+		if (TownStats.unit_count_blacksmith / unitCount <= 0.125
+				&& TownStats.unit_count_blacksmith < 2
+				&& checkSufficientResources(EnumBuildingType.BLACKSMITH))
+		{
+			needBuild = true;
+			needSpawn = true;
+			return EnumBuildingType.BLACKSMITH;
+		}
+
+		needBuild = false;
+		needSpawn = false;
+		return null;
+	}
+
+	private boolean checkSufficientResources(EnumBuildingType building)
+	{
+		switch (building)
+		{
+			case SUPPLY_POINT:
+				return (TownStats.res_stone >= 10 && TownStats.res_wood >= 10);
+			case TOWN_HALL:
+				return (TownStats.res_stone >= 50 && TownStats.res_wood >= 50);
+			case FARM:
+				return (TownStats.res_wood >= 20 && TownStats.res_food >= 50);
+			case NO_BUILDING:
+				return (TownStats.res_food >= 50);
+			case MINE:
+				return (TownStats.res_stone < 20 && TownStats.res_food >= 50);
+			case BLACKSMITH:
+				return false;
+				default:
+					return false;
+		}
+	}
     
     public BlockPos loadBuildingSize(String name)
     {

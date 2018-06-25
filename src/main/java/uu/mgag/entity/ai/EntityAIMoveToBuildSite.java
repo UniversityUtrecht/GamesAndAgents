@@ -71,14 +71,13 @@ public class EntityAIMoveToBuildSite extends EntityAIMoveToBlock
     public void startExecuting()
     {		
 		//Minecraft.getMinecraft().player.sendChatMessage(this.destinationBlock.getX() + ", " + this.destinationBlock.getY() + ", " + this.destinationBlock.getZ());
-		Minecraft.getMinecraft().player.sendChatMessage("Moving to Build Site");
+		//Minecraft.getMinecraft().player.sendChatMessage("Moving to Build Site");
 		super.startExecuting();
     }
 
 	@Override
-	protected boolean shouldMoveTo(World worldIn, BlockPos pos) {
-		boolean empty = true;
-		
+	protected boolean shouldMoveTo(World worldIn, BlockPos pos) 
+	{
 		for (int i = 0; i < size.getX(); i++) for (int j = 0; j < size.getZ(); j++)
 		{
 			Vec3i offset1 = new Vec3i(i, -1, j);
@@ -93,7 +92,6 @@ public class EntityAIMoveToBuildSite extends EntityAIMoveToBlock
 			if (block2 != Blocks.AIR && block2 != Blocks.TALLGRASS && block2 != Blocks.YELLOW_FLOWER && block2 != Blocks.RED_FLOWER)
 				return false;
 		}
-		
 		return true;
 	}
 	

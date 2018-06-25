@@ -15,19 +15,20 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import uu.mgag.entity.EntityWorker;
 import uu.mgag.util.enums.EnumBuildingType;
+import uu.mgag.util.enums.EnumMineOffset;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
-public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
+public class EntityAIMoveToMine extends EntityAIMoveToBlock
 {
 	private final EntityWorker worker;
-	private EnumSupplyOffset supplyChest;
+	private EnumMineOffset mineOffset;
 	public boolean active;
 
-	public EntityAIMoveToSupplyPoint(EntityWorker workerIn, double speedIn, EnumSupplyOffset side)
+	public EntityAIMoveToMine(EntityWorker workerIn, double speedIn, EnumMineOffset offs)
 	{
 		super(workerIn, speedIn, 64);
 		this.worker = workerIn;
-		this.supplyChest = side;
+		this.mineOffset = offs;
 		this.active = false;
 		this.setMutexBits(7);
 	}
@@ -88,21 +89,16 @@ public class EntityAIMoveToSupplyPoint extends EntityAIMoveToBlock
 	@Override
 	protected boolean shouldMoveTo(World worldIn, BlockPos pos)
 	{
-		BlockPos foundationPos = pos.subtract(supplyChest.getOffset());		
+		BlockPos foundationPos = pos.subtract(mineOffset.getOffset());		
 		Block block = worldIn.getBlockState(foundationPos).getBlock();			
 		int type = block.getMetaFromState(worldIn.getBlockState(foundationPos));
 		
-		if (block == Block.REGISTRY.getObject(new ResourceLocation("mm:foundation_block")) && type == EnumBuildingType.SUPPLY_POINT.getMeta())
+		if (block == Block.REGISTRY.getObject(new ResourceLocation("mm:foundation_block")) && type == EnumBuildingType.MINE.getMeta())
 		{
 			return true;
 		}		
 		
 		return false;
-	}
-	
-	public void setSupplyChest(EnumSupplyOffset side)
-	{
-		this.supplyChest = side;
 	}
 
 }

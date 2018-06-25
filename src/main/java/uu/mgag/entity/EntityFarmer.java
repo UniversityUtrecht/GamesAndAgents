@@ -8,10 +8,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import uu.mgag.entity.ai.EntityAIAccessChest;
 import uu.mgag.entity.ai.EntityAIHarvestCrops;
+import uu.mgag.entity.ai.EntityAIMoveToBlockPos;
 import uu.mgag.entity.ai.EntityAIMoveToReferencePoint;
 import uu.mgag.entity.ai.EntityAIMoveToSupplyPoint;
 import uu.mgag.entity.ai.EntityAIReplantCrops;
 import uu.mgag.util.enums.EnumEntityStage;
+import uu.mgag.util.TownStats;
 import uu.mgag.util.enums.EnumBuildingType;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
@@ -22,7 +24,7 @@ public class EntityFarmer extends EntityWorker implements INpc
 	private EntityAIAccessChest depositResources = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Items.WHEAT), 1, true);
 	private EntityAIHarvestCrops harvestCrops = new EntityAIHarvestCrops(this, 0.6D, Blocks.WHEAT);
 	private EntityAIReplantCrops replantCrops = new EntityAIReplantCrops(this, 0.6D);
-	private EntityAIMoveToReferencePoint moveToReferencePoint = new EntityAIMoveToReferencePoint(this, 0.6D, EnumBuildingType.FARM);
+    private EntityAIMoveToBlockPos moveToWork = new EntityAIMoveToBlockPos(this, 0.6D);     
 
 	public EntityFarmer(World worldIn) {
 		super(worldIn);
@@ -31,6 +33,8 @@ public class EntityFarmer extends EntityWorker implements INpc
 	@Override
 	protected void setAdditionalAItasks()
     {
+		this.moveToWork.setDestination(workPoint);	
+		
 		if (!this.areAdditionalTasksSet)
         {
             this.areAdditionalTasksSet = true; 
@@ -39,7 +43,7 @@ public class EntityFarmer extends EntityWorker implements INpc
             this.tasks.addTask(2, depositResources);
             this.tasks.addTask(2, harvestCrops);
             this.tasks.addTask(2, replantCrops);
-            this.tasks.addTask(2, moveToReferencePoint);
+            this.tasks.addTask(2, moveToWork);
             this.tasks.addTask(2, takeSeeds);
         }
     }
@@ -61,7 +65,8 @@ public class EntityFarmer extends EntityWorker implements INpc
 			this.moveToSupplyPoint.activateIfNotRunning();
 			break;
 		case MOVE_TO_WORKING_REFERENCE_POINT:
-			this.moveToReferencePoint.activateIfNotRunning();
+			this.moveToWork.activateIfNotRunning();
+			//this.moveToReferencePoint.activateIfNotRunning();
 			break;
 		case NONE:
 			moveToNextStage();

@@ -8,7 +8,8 @@ public enum EnumBuildingType implements IStringSerializable
 	TOWN_HALL (1, "hall", 0, 0, 0),
 	FARM (2, "farm", -8, 2, -8), // TODO: changes in negative logics reflect AI classes too
 	BLACKSMITH (3, "smith", 0, 0, 0),
-	NO_BUILDING (4, "none", 0, 0, 0);
+	MINE (4, "mine", 0, 0, 0),
+	NO_BUILDING (5, "none", 0, 0, 0);
 	
 	private static final EnumBuildingType[] META_LOOKUP = new EnumBuildingType[values().length];
 	private final int meta;

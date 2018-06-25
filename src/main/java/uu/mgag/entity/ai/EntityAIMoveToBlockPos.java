@@ -51,7 +51,7 @@ public class EntityAIMoveToBlockPos extends EntityAIMoveToBlock
     public void startExecuting()
     {		
 		//Minecraft.getMinecraft().player.sendChatMessage(this.destinationBlock.getX() + ", " + this.destinationBlock.getY() + ", " + this.destinationBlock.getZ());
-		Minecraft.getMinecraft().player.sendChatMessage("Moving to BlockPos");
+		//Minecraft.getMinecraft().player.sendChatMessage("Moving to BlockPos");
 		super.startExecuting();
     }
 	

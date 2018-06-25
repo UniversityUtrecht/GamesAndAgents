@@ -30,7 +30,7 @@ public class BlockFoundation extends Block implements IHasModel, IMetaName
 		
 	public BlockFoundation(String name, Material materialIn)
 	{
-		this(name, materialIn, EnumBuildingType.SUPPLY_POINT);
+		this(name, materialIn, EnumBuildingType.NO_BUILDING);
 	}
 	
 	public BlockFoundation(String name, Material materialIn, EnumBuildingType typeIn)
@@ -40,7 +40,7 @@ public class BlockFoundation extends Block implements IHasModel, IMetaName
 		setRegistryName(name);		
 		setBlockUnbreakable();
 		setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-		setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, EnumBuildingType.SUPPLY_POINT));
+		setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, EnumBuildingType.NO_BUILDING));
 		
 		this.type = typeIn;
 		

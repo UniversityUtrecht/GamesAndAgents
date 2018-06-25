@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -23,6 +24,7 @@ import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
@@ -36,6 +38,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootTableList;
+import uu.mgag.util.TownStats;
 import uu.mgag.util.enums.EnumEntityStage;
 
 public abstract class EntityWorker extends EntityCreature implements INpc
@@ -272,8 +275,9 @@ public abstract class EntityWorker extends EntityCreature implements INpc
      * @param item to take
      * @param quantity of items to take
      */
-    public void depositItemsToChest(BlockPos chestPosition, int itemId, int quantity)
+    public void depositItemsToChest(BlockPos chestPosition, int itemId, int quantityIn)
     {
+    	int quantity = quantityIn;
     	
     	IBlockState iblockstate = world.getBlockState(chestPosition);
         Block block = iblockstate.getBlock();
@@ -333,6 +337,17 @@ public abstract class EntityWorker extends EntityCreature implements INpc
                     }
         		}
         	}
+        	
+        	if (itemId == Item.getIdFromItem(Item.getItemFromBlock(Blocks.COBBLESTONE)))
+        		TownStats.res_stone += quantityIn;
+        	
+        	if (itemId == Item.getIdFromItem(Item.getItemFromBlock(Blocks.LOG)))
+        		TownStats.res_wood += quantityIn;
+        	
+        	if (itemId == Item.getIdFromItem(Items.WHEAT))
+        		TownStats.res_food += quantityIn;
+        	
+        	Minecraft.getMinecraft().player.sendChatMessage("[Food: " + TownStats.res_food + "][Wood: " + TownStats.res_wood + "][Stone: " + TownStats.res_stone + "]");
         }
     }
 

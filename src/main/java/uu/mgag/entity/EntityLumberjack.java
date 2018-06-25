@@ -9,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import uu.mgag.entity.ai.*;
+import uu.mgag.util.TownStats;
 import uu.mgag.util.enums.EnumEntityStage;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
@@ -55,21 +56,21 @@ public class EntityLumberjack extends EntityWorker implements INpc
                 if (!this.moveToSupplyPoint.active)
                 {
                     this.moveToSupplyPoint.active = true;
-                    Minecraft.getMinecraft().player.sendChatMessage("Lumberjack: new stage: MOVE_TO_SUPPLY_POINT");
+                    //Minecraft.getMinecraft().player.sendChatMessage("Lumberjack: new stage: MOVE_TO_SUPPLY_POINT");
                 }
                 break;
             case DEPOSIT_RESOURCES:
                 if (!this.accessChest.active)
                 {
                     this.accessChest.active = true;
-                    Minecraft.getMinecraft().player.sendChatMessage("Lumberjack: new stage: DEPOSIT_RESOURCES");
+                    //Minecraft.getMinecraft().player.sendChatMessage("Lumberjack: new stage: DEPOSIT_RESOURCES");
                 }
                 break;
             case GATHER_RESOURCES:
                 if (!this.chopWood.active)
                 {
                     this.chopWood.active = true;
-                    Minecraft.getMinecraft().player.sendChatMessage("Lumberjack: new stage: GATHER_RESOURCES");
+                    //Minecraft.getMinecraft().player.sendChatMessage("Lumberjack: new stage: GATHER_RESOURCES");
                 }
                 break;
             case NONE:

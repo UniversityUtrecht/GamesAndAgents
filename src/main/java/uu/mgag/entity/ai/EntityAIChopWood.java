@@ -72,7 +72,7 @@ public class EntityAIChopWood extends EntityAIMoveToBlock {
             {
                 this.worker.addItemToInventory(Item.getItemFromBlock(resourceType), 1);
                 this.worker.world.destroyBlock(destinationBlock, false);
-                Minecraft.getMinecraft().player.sendChatMessage("NPC acquired " + resourceType.toString());
+                //Minecraft.getMinecraft().player.sendChatMessage("NPC acquired " + resourceType.toString());
                 this.runDelay = 10;
             }
         }

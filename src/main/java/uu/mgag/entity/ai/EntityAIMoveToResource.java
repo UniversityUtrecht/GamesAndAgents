@@ -64,7 +64,7 @@ public class EntityAIMoveToResource extends EntityAIMoveToBlock {
     
     public void startExecuting()
     {
-		Minecraft.getMinecraft().player.sendChatMessage("Moving to Resource");
+		//Minecraft.getMinecraft().player.sendChatMessage("Moving to Resource");
     	super.startExecuting();
     }
 	

@@ -1,5 +1,7 @@
 package uu.mgag.entity;
 
+import java.io.File;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -63,8 +65,7 @@ public class EntityBuilder extends EntityWorker implements INpc
 	protected void setAdditionalAItasks()
     {		
 		homePoint = new BlockPos(this.posX, this.posY, this.posZ);
-		this.moveToHome.setDestination(homePoint);
-		Minecraft.getMinecraft().player.sendChatMessage("Home: " + homePoint);		
+		this.moveToHome.setDestination(homePoint);		
 		
         if (!this.areAdditionalTasksSet)
         {
@@ -118,12 +119,7 @@ public class EntityBuilder extends EntityWorker implements INpc
             case SPAWN:
         		this.spawnNecessary();            		
             	this.updateTownStatsResources();
-            	this.updateTownStatsBuildings();
-            	
-            	Minecraft.getMinecraft().player.sendChatMessage("Supply points: " + TownStats.count_supply);
-            	Minecraft.getMinecraft().player.sendChatMessage("Wood: " + TownStats.res_wood);
-            	Minecraft.getMinecraft().player.sendChatMessage("Stone: " + TownStats.res_stone);
-            	
+            	this.updateTownStatsBuildings();            	
             	moveToNextStage();
             	break;
             default:
@@ -203,18 +199,25 @@ public class EntityBuilder extends EntityWorker implements INpc
     		return EnumBuildingType.TOWN_HALL;
     	}
     	
-    	if (TownStats.res_wood >= 20 && TownStats.res_food >= 50)
+    	if (TownStats.count_hall == 1) if (TownStats.res_wood >= 20 && TownStats.res_food >= 50)
     	{
     		needBuild = true;
     		needSpawn = true;
     		return EnumBuildingType.FARM;
     	}
     	
-    	if (TownStats.res_wood < 20 && TownStats.res_food >= 50)
+    	if (TownStats.count_hall == 1) if (TownStats.res_wood < 20 && TownStats.res_food >= 50)
     	{
     		needBuild = false;
     		needSpawn = true;
     		return EnumBuildingType.NO_BUILDING;
+    	}
+    	
+    	if (TownStats.count_hall == 1) if (TownStats.res_stone < 20 && TownStats.res_food >= 50)
+    	{
+    		needBuild = true;
+    		needSpawn = true;
+    		return EnumBuildingType.MINE;
     	}
     	
     	needBuild = false;
@@ -228,17 +231,13 @@ public class EntityBuilder extends EntityWorker implements INpc
     	{
     	case FARM:
     		this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.FARMER));
+    		break;
     	case NO_BUILDING:
-    		if (TownStats.res_wood < 20)
-			{
-    			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.LUMBERJACK));
-    			return;
-			}
-    		/*if (TownStats.res_stone < 20)
-			{
-    			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.MINER));
-    			return;
-			}*/
+			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.LUMBERJACK));
+			break;
+    	case MINE:
+			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.MINER));
+			break;    		
     	default:
     		break;
     	}
@@ -252,10 +251,10 @@ public class EntityBuilder extends EntityWorker implements INpc
         
         ResourceLocation testloc = new ResourceLocation(Reference.MOD_ID, name);
         Template template = templatemanager.get(minecraftserver, testloc);
-        
+                
         if (template == null)
         {
-            Minecraft.getMinecraft().player.sendChatMessage("Template null");
+			Minecraft.getMinecraft().player.sendChatMessage("Template null");
             return null;
         }
         else return template.getSize().add(padding);
@@ -274,7 +273,7 @@ public class EntityBuilder extends EntityWorker implements INpc
         ResourceLocation testloc = new ResourceLocation(Reference.MOD_ID, name);
         Template template = templatemanager.get(minecraftserver, testloc);
         //Template template = templatemanager.get(minecraftserver, new ResourceLocation(Reference.MOD_ID + ":structures/mgag_test01.nbt"));
-        
+                
         if (template == null)
         {
             Minecraft.getMinecraft().player.sendChatMessage("Template null");
@@ -282,8 +281,11 @@ public class EntityBuilder extends EntityWorker implements INpc
         }
         else
         {
-            BlockPos blockpos2 = template.getSize();
-            Minecraft.getMinecraft().player.sendChatMessage(blockpos2.toString());
+            BlockPos blockpos2 = template.getSize();            
+
+            this.workPoint = blockpos.add(new BlockPos(blockpos2.getX(), 0, blockpos2.getZ()));        	
+        	Minecraft.getMinecraft().player.sendChatMessage("SpawnWork: " + this.workPoint.getX() + "," + this.workPoint.getY() + "," + this.workPoint.getZ());
+            //Minecraft.getMinecraft().player.sendChatMessage(blockpos2.toString());
             
             PlacementSettings placementsettings = (new PlacementSettings()).setMirror(Mirror.NONE).setRotation(Rotation.NONE).setIgnoreEntities(true).setChunk((ChunkPos)null).setReplacedBlock((Block)null).setIgnoreStructureBlock(false);
 
@@ -304,6 +306,12 @@ public class EntityBuilder extends EntityWorker implements INpc
     		break;
     	case FARM:
     		TownStats.count_farm++;
+    		break;
+    	case MINE:
+    		TownStats.count_mine++;
+    		break;
+    	case NO_BUILDING:
+    		TownStats.count_lumber++;
     		break;
 		default:
 			break;    		
@@ -326,6 +334,9 @@ public class EntityBuilder extends EntityWorker implements INpc
     		break;
     	case FARM:
     		TownStats.res_wood -= 20;
+    		TownStats.res_food -= 50;
+    		break;
+    	case MINE:
     		TownStats.res_food -= 50;
     		break;
     	case NO_BUILDING:
@@ -364,6 +375,7 @@ public class EntityBuilder extends EntityWorker implements INpc
     	}
     	
     	newEntity.setPosition(position.getX(), position.getY(), position.getZ());
+    	newEntity.workPoint = this.workPoint;
     	newEntity.setAdditionalAItasks();
     	return newEntity;
     }

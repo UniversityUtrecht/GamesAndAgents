@@ -63,7 +63,7 @@ public class EntityAIMineResource extends EntityAIBase {
                     if (worker.world.getBlockState(blockPos).getBlock() == resourceType) {
                         worker.world.destroyBlock(blockPos, false);
                         worker.getWorkerInventory().addItem(new ItemStack(resourceType));
-                        Minecraft.getMinecraft().player.sendChatMessage("NPC acquired " + resourceType.toString());
+                        //Minecraft.getMinecraft().player.sendChatMessage("NPC acquired " + resourceType.toString());
                         this.active = false;
                         this.worker.moveToNextStage();
                         return true;

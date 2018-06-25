@@ -3,6 +3,8 @@
         "variant=supply": { "model": "mm:foundation_supply" },
         "variant=hall": { "model": "mm:foundation_hall" },
         "variant=farm": { "model": "mm:foundation_farm" },
-        "variant=smith": { "model": "mm:foundation_smith" }
+        "variant=smith": { "model": "mm:foundation_smith" },
+        "variant=mine": { "model": "mm:foundation_mine" },
+        "variant=none": { "model": "mm:foundation_none" }
     }
 }

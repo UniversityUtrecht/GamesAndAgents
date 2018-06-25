@@ -68,7 +68,7 @@ public class EntityAIAccessChest extends EntityAIMoveToBlock
     @Override
     public void startExecuting()
     {
-    	Minecraft.getMinecraft().player.sendChatMessage("Accessing Chest");
+    	//Minecraft.getMinecraft().player.sendChatMessage("Accessing Chest");
     	this.timeoutCounter = 0;
         this.maxStayTicks = this.worker.getRNG().nextInt(this.worker.getRNG().nextInt(1200) + 1200) + 1200;
     }

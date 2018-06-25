@@ -70,7 +70,7 @@ public class EntityAIMoveToReferencePoint extends EntityAIMoveToBlock
     
 	public void startExecuting()
     {		
-		Minecraft.getMinecraft().player.sendChatMessage("Moving to Reference Point");
+		//Minecraft.getMinecraft().player.sendChatMessage("Moving to Reference Point");
 		super.startExecuting();
     }
 	

@@ -80,7 +80,7 @@ public class EntityAIHarvestCrops extends EntityAIMoveToBlock {
             {
                 this.worker.getWorkerInventory().addItem(new ItemStack(Items.WHEAT, 1)); // TODO: stack size based on drops
                 worker.world.setBlockState(blockPos, ((BlockCrops)resourceType).getDefaultState(), 3); // Change this
-                Minecraft.getMinecraft().player.sendChatMessage("NPC acquired " + resourceType.toString());
+                //Minecraft.getMinecraft().player.sendChatMessage("NPC acquired " + resourceType.toString());
                 this.active = false;
                 this.worker.moveToNextStage();
                 this.runDelay = 10;

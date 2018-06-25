@@ -235,8 +235,10 @@ public abstract class EntityWorker extends EntityCreature implements INpc
      * @param item to take
      * @param quantity of items to take
      */
-    public void takeItemsFromChest(BlockPos chestPosition, int itemId, int quantity)
+    public void takeItemsFromChest(BlockPos chestPosition, int itemId, int quantityIn)
     {
+    	int quantity = quantityIn;
+    	
         IBlockState iblockstate = world.getBlockState(chestPosition);
         Block block = iblockstate.getBlock();
         if (block instanceof BlockChest)
@@ -265,7 +267,10 @@ public abstract class EntityWorker extends EntityCreature implements INpc
                     	break;
                     }
         		}
-        	}
+        	}        	
+
+        	if (itemId == Item.getIdFromItem(Item.getItemFromBlock(Blocks.IRON_ORE)))
+        		TownStats.amount_ore -= quantityIn;
         }
     }
     
@@ -342,12 +347,18 @@ public abstract class EntityWorker extends EntityCreature implements INpc
         		TownStats.res_stone += quantityIn;
         	
         	if (itemId == Item.getIdFromItem(Item.getItemFromBlock(Blocks.LOG)))
-        		TownStats.res_wood += quantityIn;
+        		TownStats.res_wood += quantityIn;        	
+
+        	if (itemId == Item.getIdFromItem(Item.getItemFromBlock(Blocks.IRON_ORE)))
+        		TownStats.amount_ore += quantityIn;
         	
         	if (itemId == Item.getIdFromItem(Items.WHEAT))
-        		TownStats.res_food += quantityIn;
+        		TownStats.res_food += quantityIn;        	
+
+        	if (itemId == Item.getIdFromItem(Items.IRON_INGOT))
+        		TownStats.res_iron += quantityIn;
         	
-        	Minecraft.getMinecraft().player.sendChatMessage("[Food: " + TownStats.res_food + "][Wood: " + TownStats.res_wood + "][Stone: " + TownStats.res_stone + "]");
+        	Minecraft.getMinecraft().player.sendChatMessage("[Food: " + TownStats.res_food + "][Wood: " + TownStats.res_wood + "][Stone: " + TownStats.res_stone + "][Iron: " + TownStats.res_iron + "]");
         }
     }
 

@@ -192,7 +192,7 @@ public class EntityBuilder extends EntityWorker implements INpc
     		return EnumBuildingType.SUPPLY_POINT;
     	}
     	
-    	if (TownStats.count_hall == 0) if (TownStats.res_stone >= 50 && TownStats.res_wood >= 50)
+    	/*if (TownStats.count_hall == 0) if (TownStats.res_stone >= 50 && TownStats.res_wood >= 50)
     	{
     		needBuild = true;
     		needSpawn = false;
@@ -218,6 +218,13 @@ public class EntityBuilder extends EntityWorker implements INpc
     		needBuild = true;
     		needSpawn = true;
     		return EnumBuildingType.MINE;
+    	}*/
+    	
+    	if (TownStats.count_supply == 1) if (TownStats.count_smith < 1)
+    	{
+    		needBuild = true;
+    		needSpawn = true;
+    		return EnumBuildingType.BLACKSMITH;
     	}
     	
     	needBuild = false;
@@ -237,7 +244,10 @@ public class EntityBuilder extends EntityWorker implements INpc
 			break;
     	case MINE:
 			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.MINER));
-			break;    		
+			break;    	
+    	case BLACKSMITH:
+			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.BLACKSMITH));
+			break;      		
     	default:
     		break;
     	}
@@ -307,6 +317,9 @@ public class EntityBuilder extends EntityWorker implements INpc
     	case FARM:
     		TownStats.count_farm++;
     		break;
+    	case BLACKSMITH:
+    		TownStats.count_smith++;
+    		break;
     	case MINE:
     		TownStats.count_mine++;
     		break;
@@ -334,6 +347,11 @@ public class EntityBuilder extends EntityWorker implements INpc
     		break;
     	case FARM:
     		TownStats.res_wood -= 20;
+    		TownStats.res_food -= 50;
+    		break;
+    	case BLACKSMITH:
+    		TownStats.res_wood -= 30;
+    		TownStats.res_stone -= 30;
     		TownStats.res_food -= 50;
     		break;
     	case MINE:

@@ -15,7 +15,7 @@ import uu.mgag.util.enums.EnumSupplyOffset;
 
 public class EntityLumberjack extends EntityWorker implements INpc
 {
-    private int maxResourceCount = 12;
+    private int maxResourceCount = 5;
 
     private EntityAIMoveToSupplyPoint moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.BUILDING_MATERIALS);
 	private EntityAIAccessChest accessChest = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Item.getItemFromBlock(Blocks.LOG)), maxResourceCount, true);

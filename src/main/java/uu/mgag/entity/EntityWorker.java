@@ -23,6 +23,7 @@ import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
@@ -334,6 +335,53 @@ public abstract class EntityWorker extends EntityCreature implements INpc
         		}
         	}
         }
+    }
+    
+    public void trashInventoryItems(int food, int wood, int stone)
+    {
+    	for(int i=0; i<workerInventory.getSizeInventory(); i++)
+    	{
+    		ItemStack items = workerInventory.getStackInSlot(i);
+    		if(food > 0 && Item.getIdFromItem(items.getItem()) == Item.getIdFromItem(Items.WHEAT))
+    		{
+    			if(items.getCount() <= food)
+    			{
+    				food -= items.getCount();
+    				workerInventory.removeStackFromSlot(i);
+    			}
+    			else
+    			{
+    				items.shrink(food);
+    				food = 0;
+    			}
+    		}
+    		else if(wood > 0 && Item.getIdFromItem(items.getItem()) == Block.getIdFromBlock(Blocks.LOG))
+    		{
+    			if(items.getCount() <= wood)
+    			{
+    				wood -= items.getCount();
+    				workerInventory.removeStackFromSlot(i);
+    			}
+    			else
+    			{
+    				items.shrink(wood);
+    				wood = 0;
+    			}
+    		}
+    		else if(stone > 0 && Item.getIdFromItem(items.getItem()) == Block.getIdFromBlock(Blocks.COBBLESTONE))
+    		{
+    			if(items.getCount() <= stone)
+    			{
+    				stone -= items.getCount();
+    				workerInventory.removeStackFromSlot(i);
+    			}
+    			else
+    			{
+    				items.shrink(stone);
+    				stone = 0;
+    			}
+    		}
+    	}
     }
 
 }

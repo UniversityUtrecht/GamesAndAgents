@@ -24,7 +24,7 @@ public class EntityAIChopWood extends EntityAIMoveToBlock {
     private final int maxResourceCount;
 
     public EntityAIChopWood(EntityWorker workerIn, double speedIn, Block resourceTypeIn, int maxResourceCount) {
-        super(workerIn, speedIn, 32);
+        super(workerIn, speedIn, 64);
         worker = workerIn;
         resourceType = resourceTypeIn;
         inventory = worker.getWorkerInventory();
@@ -63,7 +63,7 @@ public class EntityAIChopWood extends EntityAIMoveToBlock {
         super.updateTask();
 
         this.worker.getLookHelper().setLookPosition((double)this.destinationBlock.getX() + 0.5D, (double)(this.destinationBlock.getY() + 1), (double)this.destinationBlock.getZ() + 0.5D, 10.0F, (float)this.worker.getVerticalFaceSpeed());
-        if (worker.getPosition().distanceSq(destinationBlock) < 20)
+        if (worker.getPosition().distanceSq(destinationBlock) < 30)
         {
             IBlockState blockState = this.worker.world.getBlockState(destinationBlock);
 

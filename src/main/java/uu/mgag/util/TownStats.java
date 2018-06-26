@@ -9,6 +9,8 @@ public class TownStats
 	
 	public static int amount_ore = 2;
 	
+	public static int population_limit = 0;
+	
 	public static int count_supply = 0;
 	public static int count_hall = 0;
 	public static int count_farm = 0;

@@ -239,19 +239,19 @@ public class EntityBuilder extends EntityWorker implements INpc
     	switch (nextBuilding)
     	{
     	case FARM:
-    		this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.FARMER));
+    		this.world.spawnEntity(this.spawnNewEntity(this.world, this.homePoint, EnumEntityType.FARMER));
     		TownStats.unit_count_farmer++;
     		break;
     	case NO_BUILDING:
-			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.LUMBERJACK));
+			this.world.spawnEntity(this.spawnNewEntity(this.world, this.homePoint, EnumEntityType.LUMBERJACK));
 			TownStats.unit_count_lumberjack++;
 			break;
     	case MINE:
-			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.MINER));
+			this.world.spawnEntity(this.spawnNewEntity(this.world, this.homePoint, EnumEntityType.MINER));
 			TownStats.unit_count_miner++;
 			break;   
     	case BLACKSMITH:
-			this.world.spawnEntity(this.spawnNewEntity(this.world, this.getPosition(), EnumEntityType.BLACKSMITH));
+			this.world.spawnEntity(this.spawnNewEntity(this.world, this.homePoint, EnumEntityType.BLACKSMITH));
 			TownStats.unit_count_blacksmith++;
 			break;      		
     	default:
@@ -406,6 +406,7 @@ public class EntityBuilder extends EntityWorker implements INpc
     		break;
     	case TOWN_HALL:
     		TownStats.count_hall++;
+    		TownStats.population_limit += 10;
     		break;
     	case FARM:
     		TownStats.count_farm++;
@@ -485,7 +486,7 @@ public class EntityBuilder extends EntityWorker implements INpc
 			break;
     	}
     	
-    	newEntity.setPosition(position.getX(), position.getY(), position.getZ());
+    	newEntity.setPosition(position.getX(), position.getY() + 3, position.getZ());
     	newEntity.workPoint = this.workPoint;
     	newEntity.setAdditionalAItasks();
     	return newEntity;

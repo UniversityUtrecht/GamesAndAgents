@@ -19,9 +19,12 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import uu.mgag.entity.ai.EntityAIMoveToBlockPos;
 import uu.mgag.entity.ai.EntityAIMoveToSupplyPoint;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
@@ -31,15 +34,16 @@ public class EntitySoldier extends EntityWorker implements INpc
 	private double attackDamage = 10.0D;
 	
 	private EntityAIMoveToSupplyPoint moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.OTHER_SUPPLIES); // TODO: change this to home location
+    private EntityAIMoveToBlockPos moveToHome = new EntityAIMoveToBlockPos(this, 0.6D);
 	
 	public EntitySoldier(World worldIn) {
 		super(worldIn);
 
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30);
-		this.setHealth(30);
-
-		this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD)); // TODO: this does not work...
-        this.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40.0D);
+		this.setHealth(40.0F);
+		
+		this.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
+		this.setHeldItem(EnumHand.OFF_HAND, new ItemStack(Items.SHIELD));
 	}
 	
 	protected void initEntityAI()
@@ -58,14 +62,16 @@ public class EntitySoldier extends EntityWorker implements INpc
     }
 	
 	@Override
-	protected void setAdditionalAItasks() {
+	protected void setAdditionalAItasks()
+	{
+		this.moveToHome.setDestination(homePoint);
+		
 		if (!this.areAdditionalTasksSet)
         {
             this.areAdditionalTasksSet = true; 
-            this.tasks.addTask(4, moveToSupplyPoint);
+            this.tasks.addTask(4, moveToHome);
         }
 	}
-	
 	
 	/**
      * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
@@ -81,9 +87,9 @@ public class EntitySoldier extends EntityWorker implements INpc
         
         // Move back home if there are no more threats
     	if(this.getAttackTarget() == null && this.getRevengeTarget() == null) // TODO: add distance from home condition - if close to home then dont execute
-        	moveToSupplyPoint.activateIfNotRunning();
+    		moveToHome.activateIfNotRunning();
         else
-        	moveToSupplyPoint.active = false;
+        	moveToHome.active = false;
         	
     }
 

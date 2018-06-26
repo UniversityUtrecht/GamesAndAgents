@@ -1,5 +1,6 @@
 package uu.mgag.entity.render;
 
+import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
@@ -7,9 +8,9 @@ import uu.mgag.entity.EntitySoldier;
 import uu.mgag.entity.model.ModelWorker;
 import uu.mgag.util.Reference;
 
-public class RenderSoldier extends RenderLiving<EntitySoldier>
+public class RenderSoldier extends RenderBiped<EntitySoldier>
 {
-	public static final ResourceLocation TEXTURES = new ResourceLocation(Reference.MOD_ID + ":textures/entity/farmer.png"); // TODO: this
+	public static final ResourceLocation TEXTURES = new ResourceLocation(Reference.MOD_ID + ":textures/entity/soldier.png");
 
 	public RenderSoldier(RenderManager manager)
 	{

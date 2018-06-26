@@ -56,7 +56,6 @@ public class EntityLumberjack extends EntityWorker implements INpc
 	
 	protected void setAdditionalAItasks()
     {		
-		homePoint = new BlockPos(this.posX, this.posY, this.posZ);
 		this.moveToHome.setDestination(homePoint);
 		
         if (!this.areAdditionalTasksSet)
@@ -67,6 +66,7 @@ public class EntityLumberjack extends EntityWorker implements INpc
             this.tasks.addTask(2, accessChest);
             this.tasks.addTask(2, chopWood);
             this.tasks.addTask(2, moveToBuildSite);
+            this.tasks.addTask(2, moveToHome);
         }		
     }
 	
@@ -146,7 +146,7 @@ public class EntityLumberjack extends EntityWorker implements INpc
                 stage = EnumEntityStage.REPLANT_RESOURCES;
                 break;
             case REPLANT_RESOURCES:
-                if (replantCount >= 5) stage = EnumEntityStage.RETURN_HOME;
+                if (replantCount >= 5) { replantCount = 0; stage = EnumEntityStage.RETURN_HOME; }
                 else stage = EnumEntityStage.MOVE_TO_BUILD_SITE;
                 break;
             case RETURN_HOME:
@@ -165,7 +165,9 @@ public class EntityLumberjack extends EntityWorker implements INpc
     }
     
     public boolean loadTree()
-    {
+    {        
+        replantCount++;
+    	
     	int randomNum = ThreadLocalRandom.current().nextInt(1/*min*/, 10/*max*/ + 1);
     	
         BlockPos blockpos = this.moveToBuildSite.getDestination().add(new BlockPos(padding.getX() / 2, 0, padding.getZ() / 2));
@@ -191,8 +193,6 @@ public class EntityLumberjack extends EntityWorker implements INpc
             PlacementSettings placementsettings = (new PlacementSettings()).setMirror(Mirror.NONE).setRotation(Rotation.NONE).setIgnoreEntities(true).setChunk((ChunkPos)null).setReplacedBlock((Block)null).setIgnoreStructureBlock(false);
 
             template.addBlocksToWorldChunk(this.world, blockpos, placementsettings);
-            
-            replantCount++;
             return true;
         }
     }

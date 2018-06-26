@@ -1,6 +1,7 @@
 package uu.mgag.entity.render;
 
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
@@ -8,7 +9,7 @@ import uu.mgag.entity.EntityWorker;
 import uu.mgag.entity.model.ModelWorker;
 import uu.mgag.util.Reference;
 
-public class RenderWorker extends RenderLiving<EntityWorker>
+public class RenderWorker extends RenderBiped<EntityWorker>
 {
 	public static final ResourceLocation TEXTURES = new ResourceLocation(Reference.MOD_ID + ":textures/entity/worker.png");
 

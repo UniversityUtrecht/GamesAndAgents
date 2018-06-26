@@ -42,6 +42,7 @@ public class EntityBuilder extends EntityWorker implements INpc
     private BlockPos padding = new BlockPos(8,0,8);
     
     private EnumBuildingType nextBuilding = null;
+    private EnumEntityType nextSpawn = null;
     
     private boolean needBuild = false;
     private boolean needSpawn = false;
@@ -243,8 +244,19 @@ public class EntityBuilder extends EntityWorker implements INpc
     		TownStats.unit_count_farmer++;
     		break;
     	case NO_BUILDING:
-			this.world.spawnEntity(this.spawnNewEntity(this.world, this.homePoint, EnumEntityType.LUMBERJACK));
-			TownStats.unit_count_lumberjack++;
+    		switch (nextSpawn)
+    		{
+    		case LUMBERJACK:
+    			this.world.spawnEntity(this.spawnNewEntity(this.world, this.homePoint, EnumEntityType.LUMBERJACK));
+    			TownStats.unit_count_lumberjack++;
+    			break;
+    		case SOLDIER:
+    			this.world.spawnEntity(this.spawnNewEntity(this.world, this.homePoint, EnumEntityType.SOLDIER));
+    			TownStats.unit_count_soldier++;
+    			break;   
+			default:
+				break;
+    		}
 			break;
     	case MINE:
 			this.world.spawnEntity(this.spawnNewEntity(this.world, this.homePoint, EnumEntityType.MINER));
@@ -295,6 +307,7 @@ public class EntityBuilder extends EntityWorker implements INpc
 		{
 			needBuild = false;
 			needSpawn = true;
+			nextSpawn = EnumEntityType.LUMBERJACK;
 			return EnumBuildingType.NO_BUILDING;
 		}
 		if (TownStats.unit_count_miner / unitCount <= 0.2
@@ -310,8 +323,18 @@ public class EntityBuilder extends EntityWorker implements INpc
 				&& checkSufficientResources(EnumBuildingType.BLACKSMITH))
 		{
 			needBuild = true;
-			needSpawn = true;
+			needSpawn = true;			
 			return EnumBuildingType.BLACKSMITH;
+		}
+		if (TownStats.unit_count_soldier / unitCount <= 0.125
+				&& TownStats.unit_count_soldier < 4
+				&& checkSufficientResources(EnumBuildingType.NO_BUILDING)
+				&& TownStats.res_iron >= 5)
+		{
+			needBuild = false;
+			needSpawn = true;
+			nextSpawn = EnumEntityType.SOLDIER;
+			return EnumBuildingType.NO_BUILDING;
 		}
 
 		needBuild = false;
@@ -418,7 +441,6 @@ public class EntityBuilder extends EntityWorker implements INpc
     		TownStats.count_mine++;
     		break;
     	case NO_BUILDING:
-    		TownStats.count_lumber++;
     		break;
 		default:
 			break;    		
@@ -453,6 +475,7 @@ public class EntityBuilder extends EntityWorker implements INpc
     		break;
     	case NO_BUILDING:
     		TownStats.res_food -= 50;
+    		if (nextSpawn == EnumEntityType.SOLDIER) TownStats.res_iron -= 5;
     		break;
 		default:
 			break;    		
@@ -475,6 +498,9 @@ public class EntityBuilder extends EntityWorker implements INpc
     	case LUMBERJACK:
     		newEntity = new EntityLumberjack(world);
     		break;
+    	case SOLDIER:
+    		newEntity = new EntitySoldier(world);
+    		break;
     	case MINER:
     		newEntity = new EntityMiner(world);
     		break;
@@ -488,6 +514,7 @@ public class EntityBuilder extends EntityWorker implements INpc
     	
     	newEntity.setPosition(position.getX(), position.getY() + 3, position.getZ());
     	newEntity.workPoint = this.workPoint;
+    	newEntity.homePoint = this.homePoint;
     	newEntity.setAdditionalAItasks();
     	return newEntity;
     }

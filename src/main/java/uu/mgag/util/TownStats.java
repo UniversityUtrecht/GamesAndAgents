@@ -22,9 +22,10 @@ public class TownStats
     public static int unit_count_lumberjack = 0;
     public static int unit_count_miner = 0;
     public static int unit_count_blacksmith = 0;
+    public static int unit_count_soldier = 0;
 
     public static int getUnitCount()
     {
-        return unit_count_farmer + unit_count_lumberjack + unit_count_miner + unit_count_blacksmith;
+        return unit_count_farmer + unit_count_lumberjack + unit_count_miner + unit_count_blacksmith + unit_count_soldier;
     }
 }

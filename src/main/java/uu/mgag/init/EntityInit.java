@@ -23,7 +23,7 @@ public class EntityInit
 		registerEntity("Lumberjack", EntityLumberjack.class, Reference.ENTITY_LUMBERJACK, 50, 6532424, 000000);
 		registerEntity("Blacksmith", EntityBlacksmith.class, Reference.ENTITY_BLACKSMITH, 50, 10198432, 000000);
 		registerEntity("Miner", EntityMiner.class, Reference.ENTITY_MINER, 50, 6306346, 000000);
-		registerEntity("Soldier", EntitySoldier.class, Reference.ENTITY_SOLDIER, 50, 23624718, 000000);
+		registerEntity("Soldier", EntitySoldier.class, Reference.ENTITY_SOLDIER, 50, 1067429, 000000);
 		registerEntity("Better Zombie", EntityBetterZombie.class, Reference.ENTITY_BETTER_ZOMBIE, 50, 4838761, 000000);
 	}
 	

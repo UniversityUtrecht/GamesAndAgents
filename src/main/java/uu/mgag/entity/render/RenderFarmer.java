@@ -1,6 +1,7 @@
 package uu.mgag.entity.render;
 
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
@@ -9,7 +10,7 @@ import uu.mgag.entity.EntityWorker;
 import uu.mgag.entity.model.ModelWorker;
 import uu.mgag.util.Reference;
 
-public class RenderFarmer extends RenderLiving<EntityFarmer>
+public class RenderFarmer extends RenderBiped<EntityFarmer>
 {
 	public static final ResourceLocation TEXTURES = new ResourceLocation(Reference.MOD_ID + ":textures/entity/farmer.png");
 

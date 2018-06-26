@@ -8,7 +8,8 @@ public enum EnumEntityType implements IStringSerializable
 	FARMER (1, "farmer"),
 	LUMBERJACK (2, "lumberjack"),
 	MINER (3, "miner"),
-	BLACKSMITH (4, "blacksmith");
+	BLACKSMITH (4, "blacksmith"),
+	SOLDIER (5, "soldier");
 	
 	private static final EnumEntityType[] META_LOOKUP = new EnumEntityType[values().length];
 	private final int meta;

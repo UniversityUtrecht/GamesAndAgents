@@ -14,4 +14,6 @@ public class Reference {
 	public static final int ENTITY_LUMBERJACK = 123;
 	public static final int ENTITY_BLACKSMITH = 124;
 	public static final int ENTITY_MINER = 125;
+	public static final int ENTITY_SOLDIER = 126;
+	public static final int ENTITY_BETTER_ZOMBIE = 127;
 }

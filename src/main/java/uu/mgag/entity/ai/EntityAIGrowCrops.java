@@ -40,7 +40,6 @@ public class EntityAIGrowCrops extends EntityAIMoveToBlock {
 			randomBlockPos = new BlockPos(this.worker.workPoint.getX() - new Random().nextInt(-EnumBuildingType.FARM.getSizeX()), 
 										this.worker.workPoint.getY()+2, 
 										this.worker.workPoint.getZ() - new Random().nextInt(-EnumBuildingType.FARM.getSizeZ()));
-			 System.out.println(this.worker.world.getBlockState(randomBlockPos).getBlock().getClass() + " " + randomBlockPos);
 		}
 	}
 	

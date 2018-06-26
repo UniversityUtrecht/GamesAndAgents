@@ -3,7 +3,7 @@ package uu.mgag.util;
 public class TownStats
 {
 	public static int res_food = 150;
-	public static int res_wood = 100;
+	public static int res_wood = 110;
 	public static int res_stone = 60;
 	public static int res_iron = 0;
 	

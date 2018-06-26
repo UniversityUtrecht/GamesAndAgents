@@ -86,7 +86,8 @@ public class EntitySoldier extends EntityWorker implements INpc
         
         // Move back home if there are no more threats
     	if(this.getAttackTarget() == null && this.getRevengeTarget() == null) // TODO: add distance from home condition - if close to home then dont execute
-    		moveToHome.activateIfNotRunning();
+    		if (homePoint != null) if (this.getDistanceSq(homePoint) > 64)
+    			moveToHome.activateIfNotRunning();
         else
         	moveToHome.active = false;
         	

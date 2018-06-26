@@ -38,6 +38,7 @@ public class EntityLumberjack extends EntityWorker implements INpc
     private EntityAIMoveToSupplyPoint moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.BUILDING_MATERIALS);
 	private EntityAIAccessChest accessChest = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Item.getItemFromBlock(Blocks.LOG)), maxResourceCount, true);
 	private EntityAIMineResource mineResource = new EntityAIMineResource(this, 0.6D, Blocks.LOG);
+    private EntityAIMoveToBlockPos moveToHome = new EntityAIMoveToBlockPos(this, 0.6D);
     private EntityAIChopWood chopWood = new EntityAIChopWood(this, 0.6D, Blocks.LOG, maxResourceCount);
     private EntityAIMoveToBuildSite moveToBuildSite = new EntityAIMoveToBuildSite(this, 0.6D);
 
@@ -54,7 +55,10 @@ public class EntityLumberjack extends EntityWorker implements INpc
     }
 	
 	protected void setAdditionalAItasks()
-    {
+    {		
+		homePoint = new BlockPos(this.posX, this.posY, this.posZ);
+		this.moveToHome.setDestination(homePoint);
+		
         if (!this.areAdditionalTasksSet)
         {
             this.areAdditionalTasksSet = true; 
@@ -70,18 +74,10 @@ public class EntityLumberjack extends EntityWorker implements INpc
 	{
 	    switch(stage) {
             case MOVE_TO_SUPPLY_POINT_BUILD:
-                if (!this.moveToSupplyPoint.active)
-                {
-                    this.moveToSupplyPoint.active = true;
-                    //Minecraft.getMinecraft().player.sendChatMessage("Lumberjack: new stage: MOVE_TO_SUPPLY_POINT");
-                }
+                this.moveToSupplyPoint.activateIfNotRunning();
                 break;
             case DEPOSIT_RESOURCES:
-                if (!this.accessChest.active)
-                {
-                    this.accessChest.active = true;
-                    //Minecraft.getMinecraft().player.sendChatMessage("Lumberjack: new stage: DEPOSIT_RESOURCES");
-                }
+            	this.accessChest.activateIfNotRunning();
                 break;
             case GATHER_RESOURCES:
                 if (!this.chopWood.active)
@@ -99,6 +95,9 @@ public class EntityLumberjack extends EntityWorker implements INpc
                     this.moveToBuildSite.activateIfNotRunning();
                 }
                 break;
+            case RETURN_HOME:
+            	this.moveToHome.activateIfNotRunning();
+            	break;
             case REPLANT_RESOURCES:
                 this.loadTree();
                 moveToNextStage();
@@ -147,9 +146,12 @@ public class EntityLumberjack extends EntityWorker implements INpc
                 stage = EnumEntityStage.REPLANT_RESOURCES;
                 break;
             case REPLANT_RESOURCES:
-                if (replantCount == 5) stage = EnumEntityStage.GATHER_RESOURCES;
+                if (replantCount >= 5) stage = EnumEntityStage.RETURN_HOME;
                 else stage = EnumEntityStage.MOVE_TO_BUILD_SITE;
                 break;
+            case RETURN_HOME:
+            	stage = EnumEntityStage.IDLE;
+            	break;
             case IDLE:
                 stage = EnumEntityStage.GATHER_RESOURCES;
                 break;

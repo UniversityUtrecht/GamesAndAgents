@@ -7,7 +7,7 @@ public class TownStats
 	public static int res_stone = 60;
 	public static int res_iron = 0;
 	
-	public static int amount_ore = 2;
+	public static int amount_ore = 5;
 	
 	public static int population_limit = 0;
 	

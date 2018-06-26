@@ -355,7 +355,7 @@ public class EntityBuilder extends EntityWorker implements INpc
 			case NO_BUILDING:
 				return (TownStats.res_food >= 50);
 			case MINE:
-				return (TownStats.res_stone < 20 && TownStats.res_food >= 50);
+				return (TownStats.res_wood >= 10 && TownStats.res_food >= 50);
 			case BLACKSMITH:
 				return (TownStats.res_stone >= 30 && TownStats.res_wood >= 30 && TownStats.res_food >= 50);
 			default:

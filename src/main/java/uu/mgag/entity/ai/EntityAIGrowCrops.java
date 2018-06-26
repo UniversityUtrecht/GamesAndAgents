@@ -1,24 +1,25 @@
 package uu.mgag.entity.ai;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.ai.EntityAIMoveToBlock;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import uu.mgag.entity.EntityWorker;
 import uu.mgag.util.enums.EnumBuildingType;
 
-public class EntityAIReplantCrops extends EntityAIMoveToBlock {
+public class EntityAIGrowCrops extends EntityAIMoveToBlock {
 	private final EntityWorker worker;
 	public boolean active;
+	BlockPos randomBlockPos = null;
 	
-	public EntityAIReplantCrops(EntityWorker workerIn, double speedIn) {
+	public EntityAIGrowCrops(EntityWorker workerIn, double speedIn) {
 		super(workerIn, speedIn, 16);
         worker = workerIn;
 		this.active = false;
@@ -36,6 +37,10 @@ public class EntityAIReplantCrops extends EntityAIMoveToBlock {
 		{
 			this.runDelay = 0;
 			this.active = true;
+			randomBlockPos = new BlockPos(this.worker.workPoint.getX() - new Random().nextInt(-EnumBuildingType.FARM.getSizeX()), 
+										this.worker.workPoint.getY()+2, 
+										this.worker.workPoint.getZ() - new Random().nextInt(-EnumBuildingType.FARM.getSizeZ()));
+			 System.out.println(this.worker.world.getBlockState(randomBlockPos).getBlock().getClass() + " " + randomBlockPos);
 		}
 	}
 	
@@ -72,30 +77,14 @@ public class EntityAIReplantCrops extends EntityAIMoveToBlock {
         this.worker.getLookHelper().setLookPosition((double)this.destinationBlock.getX() + 0.5D, (double)(this.destinationBlock.getY() + 1), (double)this.destinationBlock.getZ() + 0.5D, 10.0F, (float)this.worker.getVerticalFaceSpeed());
         if (this.getIsAboveDestination())
         {
+        	
         	BlockPos blockPos = this.destinationBlock.up();
             IBlockState iblockstate = this.worker.world.getBlockState(blockPos);
-            if (iblockstate.getMaterial() == Material.AIR) 
+            Block block = iblockstate.getBlock();
+            if (block instanceof BlockCrops && !((BlockCrops)block).isMaxAge(iblockstate))
             {
-            	InventoryBasic inventorybasic = this.worker.getWorkerInventory();
-                for (int i = 0; i < inventorybasic.getSizeInventory(); ++i)
-                {
-                    ItemStack itemstack = inventorybasic.getStackInSlot(i);
-                    if (!itemstack.isEmpty())
-                    {
-                        if (itemstack.getItem() == Items.WHEAT_SEEDS) // TODO: generalize this to all crops
-                        {
-                        	this.worker.world.setBlockState(blockPos.down(), Blocks.FARMLAND.getDefaultState());
-                            this.worker.world.setBlockState(blockPos, Blocks.WHEAT.getDefaultState(), 3);
-                            
-                            itemstack.shrink(1);
-                            if (itemstack.isEmpty())
-                            {
-                                inventorybasic.setInventorySlotContents(i, ItemStack.EMPTY);
-                            }
-                        }
-                        break;
-                    }
-                }
+            	this.worker.world.setBlockState(blockPos.down(), Blocks.FARMLAND.getDefaultState());
+                this.worker.world.setBlockState(blockPos, ((BlockCrops)block).withAge(((BlockCrops)block).getMaxAge()), 3); // 7 is max age for wheat
             }
             
             this.active = false;
@@ -106,17 +95,29 @@ public class EntityAIReplantCrops extends EntityAIMoveToBlock {
 
 	@Override
 	protected boolean shouldMoveTo(World worldIn, BlockPos pos) {
-		Block block = worldIn.getBlockState(pos).getBlock();
-		if (block == Blocks.DIRT || block == Blocks.FARMLAND || block == Blocks.GRASS)
-        {
-			pos = pos.up();
-            IBlockState iblockstate = worldIn.getBlockState(pos);
-            block = iblockstate.getBlock();
-            if(iblockstate.getMaterial() == Material.AIR && isBlockInsideFarm(worldIn, pos))
-            {
-            	return true;
-            }
-        }
+
+		Block blockRandom = worldIn.getBlockState(randomBlockPos).getBlock();
+		IBlockState iblockstateRandom = worldIn.getBlockState(randomBlockPos);
+		if(blockRandom instanceof BlockCrops && !((BlockCrops)blockRandom).isMaxAge(iblockstateRandom) && isBlockInsideFarm(worldIn, randomBlockPos))
+		{
+			if(pos.getX() == randomBlockPos.getX() && pos.getY() == randomBlockPos.down().getY() && pos.getZ() == randomBlockPos.getZ())
+				return true;
+		}
+		else
+		{
+			Block block = worldIn.getBlockState(pos).getBlock();
+			if (block == Blocks.FARMLAND)
+	        {
+				
+				pos = pos.up();
+	            IBlockState iblockstate = worldIn.getBlockState(pos);
+	            block = iblockstate.getBlock();
+	            if(block instanceof BlockCrops && !((BlockCrops)block).isMaxAge(iblockstate) && isBlockInsideFarm(worldIn, pos))
+	            {
+	            	return true;
+	            }
+	        }
+		}
 		return false;
 	}
 	

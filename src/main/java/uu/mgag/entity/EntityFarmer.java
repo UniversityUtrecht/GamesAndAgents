@@ -4,17 +4,14 @@ import net.minecraft.entity.INpc;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import uu.mgag.entity.ai.EntityAIAccessChest;
+import uu.mgag.entity.ai.EntityAIGrowCrops;
 import uu.mgag.entity.ai.EntityAIHarvestCrops;
 import uu.mgag.entity.ai.EntityAIMoveToBlockPos;
-import uu.mgag.entity.ai.EntityAIMoveToReferencePoint;
 import uu.mgag.entity.ai.EntityAIMoveToSupplyPoint;
 import uu.mgag.entity.ai.EntityAIReplantCrops;
 import uu.mgag.util.enums.EnumEntityStage;
-import uu.mgag.util.TownStats;
-import uu.mgag.util.enums.EnumBuildingType;
 import uu.mgag.util.enums.EnumSupplyOffset;
 
 public class EntityFarmer extends EntityWorker implements INpc
@@ -24,6 +21,7 @@ public class EntityFarmer extends EntityWorker implements INpc
 	private EntityAIAccessChest depositResources = new EntityAIAccessChest(this, 0.6D, Item.getIdFromItem(Items.WHEAT), 5, true);
 	private EntityAIHarvestCrops harvestCrops = new EntityAIHarvestCrops(this, 0.6D, Blocks.WHEAT);
 	private EntityAIReplantCrops replantCrops = new EntityAIReplantCrops(this, 0.6D);
+	private EntityAIGrowCrops growCrops = new EntityAIGrowCrops(this, 0.6D);
     private EntityAIMoveToBlockPos moveToWork = new EntityAIMoveToBlockPos(this, 0.6D);     
 
 	public EntityFarmer(World worldIn) {
@@ -43,6 +41,7 @@ public class EntityFarmer extends EntityWorker implements INpc
             this.tasks.addTask(2, depositResources);
             this.tasks.addTask(2, harvestCrops);
             this.tasks.addTask(2, replantCrops);
+            this.tasks.addTask(2, growCrops);
             this.tasks.addTask(2, moveToWork);
             this.tasks.addTask(2, takeSeeds);
         }
@@ -71,8 +70,11 @@ public class EntityFarmer extends EntityWorker implements INpc
 		case NONE:
 			moveToNextStage();
 			break;
-		case POST_GATHER_RESOURCES: // Replant crops
+		case REPLANT_RESOURCES: // Replant crops
 			this.replantCrops.activateIfNotRunning();
+			break;
+		case GROW_RESOURCES:
+			this.growCrops.activateIfNotRunning();
 			break;
 		case TAKE_TOOLS: // Take seeds, TODO: take tools
 			this.takeSeeds.activateIfNotRunning();
@@ -102,7 +104,7 @@ public class EntityFarmer extends EntityWorker implements INpc
 			}
 			break;
 		case GATHER_RESOURCES:
-			stage = EnumEntityStage.POST_GATHER_RESOURCES;
+			stage = EnumEntityStage.REPLANT_RESOURCES;
 			break;
 		case IDLE:
 			stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT_FOOD;
@@ -116,7 +118,10 @@ public class EntityFarmer extends EntityWorker implements INpc
 		case NONE:
 			stage = EnumEntityStage.IDLE;
 			break;
-		case POST_GATHER_RESOURCES:
+		case REPLANT_RESOURCES:
+			stage = EnumEntityStage.GROW_RESOURCES;
+			break;
+		case GROW_RESOURCES:
 			stage = EnumEntityStage.MOVE_TO_SUPPLY_POINT_FOOD;
 			break;
 		case TAKE_TOOLS:

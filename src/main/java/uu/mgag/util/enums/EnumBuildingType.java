@@ -6,7 +6,7 @@ public enum EnumBuildingType implements IStringSerializable
 {
 	SUPPLY_POINT (0, "supply", 0, 0, 0),
 	TOWN_HALL (1, "hall", 0, 0, 0),
-	FARM (2, "farm", -8, 2, -8), // TODO: changes in negative logics reflect AI classes too
+	FARM (2, "farm", -10, 3, -10), // TODO: changes in negative logics reflect AI classes too
 	BLACKSMITH (3, "smith", 0, 0, 0),
 	MINE (4, "mine", 0, 0, 0),
 	NO_BUILDING (5, "none", 0, 0, 0);

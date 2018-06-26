@@ -50,8 +50,7 @@ public abstract class EntityWorker extends EntityCreature implements INpc
 
     protected boolean areAdditionalTasksSet;
     
-   	public EnumEntityStage stage;   	
-   	public BlockPos referencePointDestination = null;
+   	public EnumEntityStage stage;
    	public BlockPos homePoint = null;
    	public BlockPos workPoint = null;
    	

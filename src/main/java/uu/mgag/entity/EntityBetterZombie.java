@@ -10,5 +10,11 @@ public class EntityBetterZombie extends EntityZombie {
 		super(worldIn);
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityWorker>(this, EntityWorker.class, true));
 	}
+	
+	@Override
+	protected boolean shouldBurnInDay()
+    {
+        return false;
+    }
 
 }

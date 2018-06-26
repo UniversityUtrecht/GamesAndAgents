@@ -1,7 +1,6 @@
 package uu.mgag.entity.ai;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.ai.EntityAIMoveToBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -45,7 +44,6 @@ public class EntityAIMoveToReferencePoint extends EntityAIMoveToBlock
 		{
 			active = false;
 			this.worker.moveToNextStage();
-			this.worker.referencePointDestination = this.destinationBlock;
 			this.runDelay = 0;
 			return;
 		}

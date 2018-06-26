@@ -33,8 +33,7 @@ public class EntitySoldier extends EntityWorker implements INpc
 	private int attackTimer;
 	private double attackDamage = 10.0D;
 	
-	private EntityAIMoveToSupplyPoint moveToSupplyPoint = new EntityAIMoveToSupplyPoint(this, 0.6D, EnumSupplyOffset.OTHER_SUPPLIES); // TODO: change this to home location
-    private EntityAIMoveToBlockPos moveToHome = new EntityAIMoveToBlockPos(this, 0.6D);
+	private EntityAIMoveToBlockPos moveToHome = new EntityAIMoveToBlockPos(this, 0.6D);
 	
 	public EntitySoldier(World worldIn) {
 		super(worldIn);
@@ -58,7 +57,7 @@ public class EntitySoldier extends EntityWorker implements INpc
         this.tasks.addTask(8, new EntityAILookIdle(this));
         
         this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false, new Class[0]));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityZombie>(this, EntityZombie.class, true));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityBetterZombie>(this, EntityBetterZombie.class, true));
     }
 	
 	@Override
